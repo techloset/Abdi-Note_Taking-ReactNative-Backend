@@ -1,61 +1,39 @@
 import { hash } from "bcrypt";
-import User from "../../../../models/user";
-import mongoose from "mongoose";
 import connectMongoDB from "../../../../lib/mongodb";
+import User from "../../../../models/user";
+import { NextResponse } from "next/server";
 
-const handler = async (req, res) => {
-  connectMongoDB().catch((err) => res.json(err));
+connectMongoDB();
 
-  if (req.method === "POST") {
-    if (!req.body) return res.status(400).json({ error: "Data is missing" });
+export async function POST(req) {
+  try {
+    const { fullName, email, password } = await req.json();
 
-    const { fullName, email, password } = req.body;
+    const user = await User.findOne({ email });
 
-    const userExists = await User.findOne({ email });
-
-    if (userExists) {
-      return res.status(409).json({ error: "User Already exists" });
-    } else {
-      if (password.length < 6)
-        return res
-          .status(409)
-          .json({ error: "Password should be 6 characters long" });
-
-      const hashedPassword = await hash(password, 12);
-
-      User.create(
-        {
-          fullName,
-          email,
-          password: hashedPassword,
-        },
-        (error, data) => {
-          if (error && error instanceof mongoose.Error.ValidationError) {
-            //mongo db will return array
-            // but we only want to show one error at a time
-
-            for (let field in error.errors) {
-              const msg = error.errors[field].message;
-              return res.status(409).json({ error: msg });
-            }
-          }
-
-          const user = {
-            email: data.email,
-            fullName: data.fullName,
-            _id: data._id,
-          };
-
-          return res.status(201).json({
-            success: true,
-            user,
-          });
-        }
+    if (user) {
+      return NextResponse.json(
+        { error: "User already exists" },
+        { status: 400 }
       );
     }
-  } else {
-    res.status(405).json({ error: "Method Not Allowed" });
-  }
-};
 
-export default handler;
+    const hashedPassword = await hash(password, 12);
+
+    const newUser = new User({
+      fullName,
+      email,
+      password: hashedPassword,
+    });
+
+    const savedUser = await newUser.save();
+
+    return NextResponse.json({
+      message: "User created successfully",
+      success: true,
+      savedUser,
+    });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
