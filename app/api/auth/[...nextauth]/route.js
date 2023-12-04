@@ -33,7 +33,6 @@ const authOptions = NextAuth({
         if (!user) {
           throw new Error("Invalid credentials");
         }
-
         const isPasswordCorrect = await compare(
           credentials.password,
           user.password
