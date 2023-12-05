@@ -25,7 +25,6 @@ const authOptions = NextAuth({
         await connectMongoDB().catch((err) => {
           throw new Error(err);
         });
-
         const user = await User.findOne({
           email: credentials?.email,
         }).select("+password");
