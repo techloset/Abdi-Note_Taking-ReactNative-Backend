@@ -4,12 +4,14 @@ const topicSchema = new Schema(
   {
     title: String,
     description: String,
+    category: String,
+    active: Boolean,
   },
   {
     timestamps: true,
   }
 );
 
-const Topic = mongoose.models.Topic || mongoose.model("Topic", topicSchema);
+const Todo = mongoose.models.Todo || mongoose.model("Todo", topicSchema);
 
-export default Topic;
+export default Todo;

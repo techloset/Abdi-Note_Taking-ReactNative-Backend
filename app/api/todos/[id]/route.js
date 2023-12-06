@@ -1,5 +1,5 @@
 import connectMongoDB from "@/lib/mongodb";
-import Topic from "@/models/topic";
+import Todo from "@/models/todo";
 import { NextResponse } from "next/server";
 
 export async function PUT(request, { params }) {
@@ -9,13 +9,13 @@ export async function PUT(request, { params }) {
       await request.json();
 
     await connectMongoDB();
-    await Topic.findByIdAndUpdate(id, { title, description });
+    await Todo.findByIdAndUpdate(id, { title, description });
 
-    return NextResponse.json({ message: "Topic updated" }, { status: 200 });
+    return NextResponse.json({ message: "Todo updated" }, { status: 200 });
   } catch (error) {
-    console.error("Error updating topic:", error);
+    console.error("Error updating todo:", error);
     return NextResponse.json(
-      { error: "Failed to update topic" },
+      { error: "Failed to update todo" },
       { status: 500 }
     );
   }
@@ -25,13 +25,13 @@ export async function GET(request, { params }) {
   try {
     const { id } = params;
     await connectMongoDB();
-    const topic = await Topic.findOne({ _id: id });
+    const todo = await Todo.findOne({ _id: id });
 
-    return NextResponse.json({ topic }, { status: 200 });
+    return NextResponse.json({ todo }, { status: 200 });
   } catch (error) {
-    console.error("Error fetching topic:", error);
+    console.error("Error fetching todo:", error);
     return NextResponse.json(
-      { error: "Failed to fetch topic" },
+      { error: "Failed to fetch todo" },
       { status: 500 }
     );
   }

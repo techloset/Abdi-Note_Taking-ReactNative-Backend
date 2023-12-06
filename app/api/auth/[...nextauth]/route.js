@@ -4,13 +4,7 @@ import User from "../../../../models/user";
 import { compare } from "bcrypt";
 import connectMongoDB from "../../../../lib/mongodb";
 
-const authOptions = NextAuth({
-  session: {
-    strategy: "jwt",
-  },
-  pages: {
-    signIn: "/login",
-  },
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -37,15 +31,33 @@ const authOptions = NextAuth({
           user.password
         );
 
-        if (isPasswordCorrect) {
-          return user;
-        }
         if (!isPasswordCorrect) {
           throw new Error("Invalid credentials");
         }
+        return user;
       },
     }),
   ],
-});
+  session: {
+    strategy: "jwt",
+  },
+  // callbacks: {
+  //   async jwt({ token, user, session }) {
+  //     console.log("jwt callback", { session, user, token });
+  //     return token;
+  //   },
+  //   async session({ session, user, token }) {
+  //     console.log("session callback", { session, user, token });
+  //     return session;
+  //   },
+  // },
 
-export { authOptions as GET, authOptions as POST };
+  secret: process.env.NEXTAUTH_SECRET,
+  // pages: {
+  //   signIn: "/login",
+  // },
+};
+
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };

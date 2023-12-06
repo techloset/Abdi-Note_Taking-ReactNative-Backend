@@ -1,12 +1,13 @@
 "use client";
 import { useSession } from "next-auth/react";
-import React from "react";
+import { useRouter } from "next/navigation";
 
 const page = () => {
+  const router = useRouter();
   const { status, data } = useSession({
     required: true,
     onUnauthenticated() {
-      // The user is not authenticated, handle it here.
+      router.push("/login");
     },
   });
   // console.log("data", data);
