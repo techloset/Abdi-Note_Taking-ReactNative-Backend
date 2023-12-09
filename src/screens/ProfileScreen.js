@@ -7,19 +7,42 @@ import {
 } from 'react-native';
 import ratio from '../styles/consts/ratio';
 import {COLOR, COMMON, FONT_FAMILY, TEXT} from '../styles/consts/GlobalStyles';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import StoreHeader from '../(components)/StoreHeader';
+import {useRoute} from '@react-navigation/native';
 // icons
 import OvalIcon from '../assets/images/icons/oval.svg';
 import SCREENS from '../library/SCREENS';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useAuth} from '../context/AuthContext';
 
 const {widthPixel, fontPixel, pixelSizeVertical} = ratio;
 
 const ProfileScreen = ({navigation}) => {
+  const route = useRoute();
+
+  const {userData, setUserData} = useAuth();
+
+  const delToken = async () => {
+    await AsyncStorage.removeItem('Token');
+  };
+
+  
+  const signOut = async () => {
+    try {
+      await delToken();
+      setUserData(null);
+      navigation.navigate(SCREENS.LOGIN);
+    } catch (error) {
+      console.error(error);
+    }
+    console.log('Logout');
+  };
+
   const optionsData = [
     {
       text: 'My Todos',
-      nav: () => navigation.navigate(SCREENS.HOME),
+      function: () => navigation.navigate(SCREENS.HOME),
     },
     {
       text: 'Language & Currency',
@@ -35,6 +58,7 @@ const ProfileScreen = ({navigation}) => {
     },
     {
       text: 'Logout',
+      function: () => signOut(),
     },
   ];
   return (
@@ -51,8 +75,8 @@ const ProfileScreen = ({navigation}) => {
             </View>
           </View>
           <View style={styles.text_Container}>
-            <Text style={styles.titleText}>Tradly Team</Text>
-            <Text style={styles.text}>info@tradly.co</Text>
+            <Text style={styles.titleText}>{userData.name}</Text>
+            <Text style={styles.text}>{userData.email}</Text>
           </View>
         </View>
       </View>
@@ -60,7 +84,7 @@ const ProfileScreen = ({navigation}) => {
         {optionsData.map((item, index) => {
           return (
             <TouchableOpacity
-              onPress={item.nav}
+              onPress={item.function}
               style={styles.option}
               key={index}>
               <Text

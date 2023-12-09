@@ -5,9 +5,12 @@ import {COLOR, FONT_FAMILY} from '../styles/consts/GlobalStyles';
 
 const {widthPixel, fontPixel} = ratio;
 
-const WhiteBtn = ({text, handleFunc}) => {
+const WhiteBtn = ({text, handleFunc, disabled}) => {
   return (
-    <TouchableOpacity onPress={handleFunc} style={styles.btn}>
+    <TouchableOpacity
+      disabled={disabled}
+      onPress={handleFunc}
+      style={styles.btn}>
       <Text style={styles.btnText}>{text}</Text>
     </TouchableOpacity>
   );

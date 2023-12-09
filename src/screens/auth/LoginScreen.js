@@ -11,6 +11,8 @@ import ratio from '../../styles/consts/ratio';
 import Input from '../../(components)/Input';
 import WhiteBtn from '../../(components)/WhiteBtn';
 import SCREENS from '../../library/SCREENS';
+import {API_ENDPOINT} from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {fontPixel, pixelSizeVertical} = ratio;
 
@@ -24,26 +26,63 @@ const LoginScreen = ({navigation}) => {
     });
   };
 
-  const handleLogin = () => {
-    // // Access the email/mobile and password from formData
-    // const {email, password} = formData;
+  const handleLogin = async () => {
+    const {email, password} = formData;
 
-    // // validate the email and password
-    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // if (!emailRegex.test(email)) {
-    //   alert('Please enter a valid email address');
-    //   return;
-    // }
+    // Validate the email and password
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert('Please enter a valid email address');
+      return;
+    }
 
-    // if (password.length < 6) {
-    //   alert('Password must be at least 6 characters long');
-    //   return;
-    // }
+    if (password.length < 6) {
+      alert('Password must be at least 6 characters long');
+      return;
+    }
 
-    // console.log('Email/Mobile:', email);
-    // console.log('Password:', password);
+    try {
+      const response = await fetch(`${API_ENDPOINT}auth/signin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
-    navigation.navigate(SCREENS.BOTTOM_NAVIGATOR);
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(`Login failed: ${errorData.message}`);
+        return;
+      }
+
+      const userData = await response.json();
+      const {existingUserByEmail, token} = userData;
+
+      // Create a new object without the hashed password
+      const user = {
+        id: existingUserByEmail.id,
+        email: existingUserByEmail.email,
+        name: existingUserByEmail.name,
+      };
+
+      alert('Login Successfully');
+      navigation.navigate(SCREENS.BOTTOM_NAVIGATOR);
+
+      try {
+        // Save token and user data to AsyncStorage
+        await AsyncStorage.setItem('Token', token);
+        await AsyncStorage.setItem('user', JSON.stringify(user));
+      } catch (error) {
+        console.error('Error saving data to AsyncStorage:', error);
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      alert('Login failed. Please try again.');
+    }
   };
 
   return (

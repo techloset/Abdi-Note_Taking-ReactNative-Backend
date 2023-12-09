@@ -62,7 +62,7 @@ const OnBoardingScreen = ({navigation}) => {
           <Paginator data={Slides} scrollX={scrollX} />
           <GreenBtn
             text={currentIndex == 2 ? 'Finish' : 'Next'}
-            handleFunc={scrollToNext}
+            onPress={scrollToNext}
           />
         </View>
       </ImageBackground>

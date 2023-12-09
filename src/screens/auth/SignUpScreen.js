@@ -13,10 +13,12 @@ import Input from '../../(components)/Input';
 import WhiteBtn from '../../(components)/WhiteBtn';
 import BackIcon from '../../assets/images/icons/backIcon.svg';
 import SCREENS from '../../library/SCREENS';
+import {API_ENDPOINT} from '@env';
 
 const {fontPixel, pixelSizeVertical} = ratio;
 
 const SignUpScreen = ({navigation}) => {
+  const [loading, setLoading] = useState();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -25,7 +27,7 @@ const SignUpScreen = ({navigation}) => {
     confirmPassword: '',
   });
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     const {firstName, lastName, email, password, confirmPassword} = formData;
 
     // Basic validation
@@ -50,17 +52,42 @@ const SignUpScreen = ({navigation}) => {
       return;
     }
 
-    // Additional validation logic can be added here
+    const userData = {
+      name: `${firstName} ${lastName}`,
+      email,
+      password,
+    };
 
-    // If validation passes, you can proceed with the sign-up logic
-    console.log('First Name:', firstName);
-    console.log('Last Name:', lastName);
-    console.log('Email/Mobile:', email);
-    console.log('Password:', password);
+    // console.log(API_ENDPOINT);
+    // return;
 
-    // Perform sign-up logic here
-    // For example, you might want to navigate to the next screen if the sign-up is successful
-    navigation.navigate(SCREENS.BOTTOM_NAVIGATOR);
+    try {
+      const response = await fetch(`${API_ENDPOINT}auth/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: userData.name,
+          email: userData.email,
+          password: userData.password,
+        }),
+      });
+      if (response.ok) {
+        setLoading(false);
+        alert('Registered Successfuly');
+        navigation.navigate(SCREENS.LOGIN);
+      } else {
+        setLoading(false);
+        alert('Email already registered');
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      alert('Something went wrong');
+    }
+
+    // console.log('response', response);
   };
 
   const handleChangeText = (field, text) => {
