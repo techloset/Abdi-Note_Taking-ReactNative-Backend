@@ -6,15 +6,17 @@ const AuthContext = createContext();
 
 // Create an AuthProvider component
 export const AuthProvider = ({children}) => {
-  const [userData, setUserData] = useState(null);
+  const [authData, setAuthData] = useState(null);
 
-  // Check login status on component mount
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        const storedData = await AsyncStorage.getItem('user');
-        const parsedData = JSON.parse(storedData);
-        setUserData(parsedData);
+        const storedData = await AsyncStorage.getItem('auth');
+        if (storedData) {
+          const parsedData = JSON.parse(storedData);
+          console.log('Parsed Data:', parsedData);
+          setAuthData(parsedData);
+        }
       } catch (error) {
         console.error('Error checking login status: ', error);
       }
@@ -24,7 +26,7 @@ export const AuthProvider = ({children}) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{userData, setUserData}}>
+    <AuthContext.Provider value={{authData, setAuthData}}>
       {children}
     </AuthContext.Provider>
   );

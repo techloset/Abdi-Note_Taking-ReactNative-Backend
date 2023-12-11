@@ -9,14 +9,10 @@ import {
 import ratio from '../styles/consts/ratio';
 import BrowseHeader from '../(components)/BrowseHeader';
 import {TEXT} from '../styles/consts/GlobalStyles';
-import {useAuth} from '../context/AuthContext';
 
 const {pixelSizeVertical} = ratio;
 
 const BrowseScreen = () => {
-  const {userData, setUserData} = useAuth();
-
-  console.log('userData', userData);
   return (
     <SafeAreaView>
       <StatusBar translucent backgroundColor={'rgba(0,0,0,0)'} />

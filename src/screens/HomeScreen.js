@@ -12,35 +12,62 @@ import {
 import ratio from '../styles/consts/ratio';
 import {COLOR, COMMON, FONT_FAMILY, TEXT} from '../styles/consts/GlobalStyles';
 import HomeHeader from '../(components)/HomeHeader';
-import SCREENS from '../library/SCREENS';
+import {API_ENDPOINT} from '@env';
+
 // icon
 import Todo_Icon from '../assets/images/icons/todo_Icon.svg';
+import {useAuth} from '../context/AuthContext';
+import {useEffect, useState} from 'react';
 
 const {widthPixel, fontPixel, pixelSizeVertical} = ratio;
 
 const HomeScreen = ({navigation}) => {
+  const {authData} = useAuth();
+  const [tasks, setTasks] = useState();
+
+  const user_id = authData.user.id;
+
+  const fetchTasks = async () => {
+    try {
+      const response = await fetch(`${API_ENDPOINT}task?id=${user_id}`);
+      if (response.ok) {
+        const data = await response.json();
+
+        setTasks(data.tasks);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
   return (
     <SafeAreaView>
       <StatusBar translucent backgroundColor={'rgba(0,0,0,0)'} />
       <HomeHeader />
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.transListContainer}>
-          <View style={styles.transList}>
-            <View style={styles.transLeft}>
-              <View style={styles.transImgContainer}>
-                <Todo_Icon />
+          {tasks?.map((item, index) => (
+            <View key={index} style={styles.transList}>
+              <View style={styles.transLeft}>
+                <View style={styles.transImgContainer}>
+                  <Todo_Icon />
+                </View>
+                <View style={styles.titleContainer}>
+                  <Text style={styles.title}>{item.title}</Text>
+                  <Text style={styles.date}>Date</Text>
+                </View>
               </View>
-              <View style={styles.titleContainer}>
-                <Text style={styles.title}>Todo</Text>
-                <Text style={styles.date}>Date</Text>
+              <View>
+                <TouchableOpacity style={styles.payBtn}>
+                  <Text style={styles.payBtnText}>Pay</Text>
+                </TouchableOpacity>
               </View>
             </View>
-            <View>
-              <TouchableOpacity style={styles.payBtn}>
-                <Text style={styles.payBtnText}>Pay</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+          ))}
         </View>
       </ScrollView>
     </SafeAreaView>

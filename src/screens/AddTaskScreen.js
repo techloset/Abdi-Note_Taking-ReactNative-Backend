@@ -19,7 +19,7 @@ import ProductInput from '../(components)/ProductInput';
 // icon
 import StoreHeader from '../(components)/StoreHeader';
 
-const AddTodo = ({navigation}) => {
+const AddTaskScreen = ({navigation}) => {
   const [todoData, setTodoData] = useState({
     title: '',
     description: '',
@@ -69,7 +69,7 @@ const AddTodo = ({navigation}) => {
   return (
     <SafeAreaView style={COMMON.super_Container}>
       <StatusBar translucent backgroundColor={'rgba(0,0,0,0)'} />
-      <StoreHeader title="Add Todo" />
+      <StoreHeader title="Add Task" />
       <ScrollView contentContainerStyle={styles.container_2}>
         <View>
           <Text style={styles.inputLabel}>Title</Text>
@@ -113,7 +113,7 @@ const AddTodo = ({navigation}) => {
   );
 };
 
-export default AddTodo;
+export default AddTaskScreen;
 
 const styles = StyleSheet.create({
   boolean: {

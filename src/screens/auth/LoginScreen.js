@@ -13,11 +13,13 @@ import WhiteBtn from '../../(components)/WhiteBtn';
 import SCREENS from '../../library/SCREENS';
 import {API_ENDPOINT} from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useAuth} from '../../context/AuthContext';
 
 const {fontPixel, pixelSizeVertical} = ratio;
 
 const LoginScreen = ({navigation}) => {
   const [formData, setFormData] = useState({});
+  const {authData, setAuthData} = useAuth();
 
   const handleChangeText = (field, text) => {
     setFormData({
@@ -42,7 +44,7 @@ const LoginScreen = ({navigation}) => {
     }
 
     try {
-      const response = await fetch(`${API_ENDPOINT}auth/signin`, {
+      const res = await fetch(`${API_ENDPOINT}auth/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -53,31 +55,19 @@ const LoginScreen = ({navigation}) => {
         }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
+      if (!res.ok) {
+        const errorData = await res.json();
         alert(`Login failed: ${errorData.message}`);
         return;
-      }
+      } else {
+        const userData = await res.json();
 
-      const userData = await response.json();
-      const {existingUserByEmail, token} = userData;
+        const {user, token} = userData;
 
-      // Create a new object without the hashed password
-      const user = {
-        id: existingUserByEmail.id,
-        email: existingUserByEmail.email,
-        name: existingUserByEmail.name,
-      };
-
-      alert('Login Successfully');
-      navigation.navigate(SCREENS.BOTTOM_NAVIGATOR);
-
-      try {
-        // Save token and user data to AsyncStorage
-        await AsyncStorage.setItem('Token', token);
-        await AsyncStorage.setItem('user', JSON.stringify(user));
-      } catch (error) {
-        console.error('Error saving data to AsyncStorage:', error);
+        setAuthData({...authData, user: user, token: token});
+        await AsyncStorage.setItem('auth', JSON.stringify(userData));
+        // console.log('userdata', userData);
+        navigation.navigate(SCREENS.BOTTOM_NAVIGATOR);
       }
     } catch (error) {
       console.error('Error during login:', error);

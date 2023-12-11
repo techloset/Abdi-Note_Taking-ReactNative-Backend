@@ -7,29 +7,18 @@ import CheckoutScreen from '../screens/CheckoutScreen';
 import CheckoutSuccessScreen from '../screens/CheckoutSuccessScreen';
 import CreateStoreScreen from '../screens/CreateStoreScreen';
 import MyStoreScreen from '../screens/MyStoreScreen';
-import OnBoardingScreen from '../screens/OnBoardingScreen';
 import PaymentOptionFinalScreen from '../screens/PaymentOptionFinalScreen';
 import PaymentOptionScreen from '../screens/PaymentOptionScreen';
 import ProductDetailScreen from '../screens/ProductDetailScreen';
 import ProductsScreen from '../screens/ProductsScreen';
 import StoreProfileScreen from '../screens/StoreProfileScreen';
 import WishlistScreen from '../screens/WishlistScreen';
-import LoginScreen from '../screens/auth/LoginScreen';
-import SignUpScreen from '../screens/auth/SignUpScreen';
 import SCREENS from './SCREENS';
 
 const NAVIGATION = [
   {
-    screenName: SCREENS.ONBOARDING,
-    component: OnBoardingScreen,
-  },
-  {
-    screenName: SCREENS.LOGIN,
-    component: LoginScreen,
-  },
-  {
-    screenName: SCREENS.SIGN_UP,
-    component: SignUpScreen,
+    screenName: SCREENS.BOTTOM_NAVIGATOR,
+    component: BottomNavigator,
   },
   {
     screenName: SCREENS.PRODUCTS,
@@ -86,10 +75,6 @@ const NAVIGATION = [
   {
     screenName: SCREENS.STORE_PROFILE,
     component: StoreProfileScreen,
-  },
-  {
-    screenName: SCREENS.BOTTOM_NAVIGATOR,
-    component: BottomNavigator,
   },
 ];
 

@@ -14,19 +14,25 @@ import OnBoardingItem from '../(components)/OnBoardingItem';
 import Paginator from '../(components)/Paginator';
 import GreenBtn from '../(components)/GreenBtn';
 import SCREENS from '../library/SCREENS';
+import {useAuth} from '../context/AuthContext';
 const {pixelSizeVertical} = ratio;
 
 const OnBoardingScreen = ({navigation}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollX = useRef(new Animated.Value(0)).current;
   const slidesRef = useRef(null);
+  const {authData} = useAuth();
 
   const scrollToNext = () => {
     if (currentIndex < Slides.length - 1) {
       slidesRef.current.scrollToIndex({index: currentIndex + 1});
       setCurrentIndex(currentIndex + 1);
     } else {
-      navigation.navigate(SCREENS.LOGIN);
+      if (authData) {
+        navigation.navigate(SCREENS.BOTTOM_NAVIGATOR);
+      } else {
+        navigation.navigate(SCREENS.LOGIN);
+      }
     }
   };
 

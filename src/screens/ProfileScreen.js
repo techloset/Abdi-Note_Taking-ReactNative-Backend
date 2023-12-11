@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import ratio from '../styles/consts/ratio';
 import {COLOR, COMMON, FONT_FAMILY, TEXT} from '../styles/consts/GlobalStyles';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import StoreHeader from '../(components)/StoreHeader';
 import {useRoute} from '@react-navigation/native';
 // icons
@@ -21,22 +21,18 @@ const {widthPixel, fontPixel, pixelSizeVertical} = ratio;
 const ProfileScreen = ({navigation}) => {
   const route = useRoute();
 
-  const {userData, setUserData} = useAuth();
+  const {authData, setAuthData} = useAuth();
 
-  const delToken = async () => {
-    await AsyncStorage.removeItem('Token');
-  };
+  // console.log('authData', authData);
 
-  
   const signOut = async () => {
     try {
-      await delToken();
-      setUserData(null);
-      navigation.navigate(SCREENS.LOGIN);
+      setAuthData('');
+      AsyncStorage.removeItem('auth');
+      console.log('Logout');
     } catch (error) {
       console.error(error);
     }
-    console.log('Logout');
   };
 
   const optionsData = [
@@ -75,8 +71,8 @@ const ProfileScreen = ({navigation}) => {
             </View>
           </View>
           <View style={styles.text_Container}>
-            <Text style={styles.titleText}>{userData.name}</Text>
-            <Text style={styles.text}>{userData.email}</Text>
+            <Text style={styles.titleText}>{authData?.user?.name}</Text>
+            <Text style={styles.text}>{authData?.user?.email}</Text>
           </View>
         </View>
       </View>
