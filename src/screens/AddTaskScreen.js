@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Switch,
   ScrollView,
+  Button,
 } from 'react-native';
 import React, {useState} from 'react';
 import ratio from '../styles/consts/ratio';
@@ -15,17 +16,26 @@ import {COLOR, COMMON, FONT_FAMILY, TEXT} from '../styles/consts/GlobalStyles';
 import GreenBtn from '../(components)/GreenBtn';
 const {widthPixel, fontPixel, pixelSizeVertical} = ratio;
 import ProductInput from '../(components)/ProductInput';
+import {API_ENDPOINT} from '@env';
 
 // icon
 import StoreHeader from '../(components)/StoreHeader';
+import SelectDropdown from 'react-native-select-dropdown';
+import {useAuth} from '../context/AuthContext';
+
+const categories = ['Urgent', 'Important', 'Time Sensitive', 'Not Important'];
 
 const AddTaskScreen = ({navigation}) => {
+  const {authData} = useAuth();
+
+  const user_id = authData.user.id;
+
   const [todoData, setTodoData] = useState({
     title: '',
     description: '',
-    category: '',
     isActive: false,
   });
+  const [category, setCategory] = useState();
 
   const handleSwitchToggle = () => {
     setTodoData(prevData => ({
@@ -34,8 +44,8 @@ const AddTaskScreen = ({navigation}) => {
     }));
   };
 
-  const handleAddTodo = () => {
-    const {title, category, isActive, description} = todoData;
+  const handleAddTodo = async () => {
+    const {title, isActive, description} = todoData;
 
     if (!title.trim()) {
       alert('Validation Error: Please enter a title');
@@ -50,14 +60,33 @@ const AddTaskScreen = ({navigation}) => {
       alert('Validation Error: Please enter a category');
       return;
     }
-    // Access here and perform any additional logic
 
-    console.log('Title:', title);
-    console.log('Description:', description);
-    console.log('Category:', category);
-    console.log('Is Active:', isActive);
+    // Perform add task logic here
 
-    // Perform add todo logic here
+    try {
+      const response = await fetch(`${API_ENDPOINT}task`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: title,
+          description: description,
+          category: category,
+          active: isActive,
+          currentUserId: user_id,
+        }),
+      });
+      if (response.ok) {
+        alert('added Successfuly');
+      } else {
+        alert('error');
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      alert('Something went wrong');
+    }
   };
 
   const handleChangeText = (field, text) => {
@@ -89,10 +118,11 @@ const AddTaskScreen = ({navigation}) => {
         </View>
         <View>
           <Text style={styles.inputLabel}>Todo Category</Text>
-          <ProductInput
-            placeholder={'Enter Category'}
-            value={todoData.category}
-            onChangeText={text => handleChangeText('category', text)}
+          <SelectDropdown
+            data={categories}
+            onSelect={selectedItem => {
+              setCategory(selectedItem);
+            }}
           />
         </View>
         <View>

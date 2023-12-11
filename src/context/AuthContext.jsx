@@ -14,7 +14,6 @@ export const AuthProvider = ({children}) => {
         const storedData = await AsyncStorage.getItem('auth');
         if (storedData) {
           const parsedData = JSON.parse(storedData);
-          console.log('Parsed Data:', parsedData);
           setAuthData(parsedData);
         }
       } catch (error) {
