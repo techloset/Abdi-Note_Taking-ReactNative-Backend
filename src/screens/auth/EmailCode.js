@@ -1,3 +1,4 @@
+import React, {useContext, useRef, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,96 +7,64 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import React, {useContext, useRef, useState} from 'react';
-import HeaderBack from '../components/HeaderBack';
+import HeaderBack from '../../components/HeaderBack';
 import {useNavigation} from '@react-navigation/native';
-import {ContextAuth} from './AuthContext';
-import * as Yup from 'yup';
 import {
   fontPixel,
   heightPixel,
   pixelSizeHorizontal,
   pixelSizeVertical,
   widthPixel,
-} from '../constants/responsive';
+} from '../../constants/responsive';
+// import OTPTextView from 'react-native-otp-textinput';
+import {COLOR} from '../../styles/consts/GlobalStyles';
+import PurpleBtn from '../../components/PurpleBtn';
 
 const EmailCode = () => {
   const navigation = useNavigation();
   const [validationErrors, setValidationErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  const validationSchema = Yup.object().shape({
-    code1: Yup.string()
-      .required('fields are required')
-      .length(1, 'All fields are required'),
-    code2: Yup.string()
-      .required('Code 2 is required')
-      .length(1, 'Code 2 must be a single character'),
-    code3: Yup.string()
-      .required('Code 3 is required')
-      .length(1, 'Code 3 must be a single character'),
-    code4: Yup.string()
-      .required('Code 4 is required')
-      .length(1, 'Code 4 must be a single character'),
-  });
+  // const [otp, setOtp] = useState('');
 
-  const code1Ref = useRef();
-  const code2Ref = useRef();
-  const code3Ref = useRef();
-  const code4Ref = useRef();
-
-  const [code1, setCode1] = useState('');
-  const [code2, setCode2] = useState('');
-  const [code3, setCode3] = useState('');
-  const [code4, setCode4] = useState('');
-
-  const handleCodeChange = (text, ref) => {
-    if (text.length === 1) {
-      ref.current.focus();
-    }
-  };
-
-  const handleFocus = () => {
-    setValidationErrors('');
-  };
-
-  const code = code1 + code2 + code3 + code4;
-  const {verifyCode} = useContext(ContextAuth);
-  verifyCode(code);
+  // Commented out API request code, replace with your implementation
+  // const { verifyCode } = useContext(ContextAuth);
+  // verifyCode(code);
 
   const submitcode = async () => {
-    setLoading(true);
+    // console.log('otp', otp);
+
+    return;
+
+    // setLoading(true);
     try {
-      await validationSchema.validate(
-        {code1, code2, code3, code4},
-        {abortEarly: false},
-      );
-      const code = code1 + code2 + code3 + code4;
-      const responce = await fetch(
-        'https://notesapp-backend-omega.vercel.app/api/user/verifycode',
-       
-        {
-          method: 'POST',
-          headers: {'content-type': 'application/json'},
-
-          body: JSON.stringify({
-            verifyCode: code,
-          }),
-        },
-      );
-
-      if (responce.ok) {
-        setLoading(false);
-        const res = await responce.json();
-
-        navigation.navigate('CreateNewPassword');
-      }
+      // Commented out Yup validation, replace with your own validation logic
+      // await validationSchema.validate(
+      //   { code1, code2, code3, code4 },
+      //   { abortEarly: false },
+      // );
+      // Replace the following with your API request logic
+      // const code = code1 + code2 + code3 + code4;
+      // const responce = await fetch(
+      //   'Your API Endpoint',
+      //   {
+      //     method: 'POST',
+      //     headers: { 'content-type': 'application/json' },
+      //     body: JSON.stringify({
+      //       verifyCode: code,
+      //     }),
+      //   },
+      // );
+      // if (responce.ok) {
+      //   setLoading(false);
+      //   const res = await responce.json();
+      //   navigation.navigate('CreateNewPassword');
+      // }
     } catch (error) {
       setLoading(false);
       const errors = {};
-      error.inner.forEach(e => {
-        errors[e.path] = e.message;
-      });
+      // Handle errors
+      // ...
       setValidationErrors(errors);
     } finally {
       setLoading(false);
@@ -114,70 +83,21 @@ const EmailCode = () => {
         </Text>
         <Text style={styles.lable}>Type Code</Text>
         <View style={styles.inputParent}>
-          <TextInput
-            ref={code1Ref}
-            style={styles.codeInput}
-            placeholderTextColor="#180E25"
-            placeholder="0"
-            value={code1}
-            maxLength={1}
-            onChangeText={text => {
-              setCode1(text);
-              handleCodeChange(text, code2Ref);
-            }}
-            onFocus={handleFocus}
-          />
-          <TextInput
-            ref={code2Ref}
-            style={styles.codeInput}
-            placeholderTextColor="#180E25"
-            placeholder="0"
-            value={code2}
-            onChangeText={text => {
-              setCode2(text);
-              handleCodeChange(text, code3Ref);
-            }}
-            maxLength={1}
-            onFocus={handleFocus}
-          />
-          <TextInput
-            ref={code3Ref}
-            style={styles.codeInput}
-            placeholderTextColor="#180E25"
-            placeholder="0"
-            value={code3}
-            onChangeText={text => {
-              setCode3(text);
-              handleCodeChange(text, code4Ref);
-            }}
-            maxLength={1}
-            onFocus={handleFocus}
-          />
-          <TextInput
-            ref={code4Ref}
-            style={styles.codeInput}
-            placeholderTextColor="#180E25"
-            placeholder="0"
-            value={code4}
-            onChangeText={text => setCode4(text)}
-            maxLength={1}
-            onFocus={handleFocus}
-          />
+          {/* <OTPTextView
+            inputCount={4}
+            offTintColor={COLOR.baseGrey}
+            tintColor={COLOR.purple}
+            textInputStyle={styles.codeInput}
+            handleTextChange={e => setOtp(e)}
+          /> */}
         </View>
-        {validationErrors.code1 && (
-          <Text style={{color: 'red', textAlign: 'center', marginTop: 10}}>
-            {validationErrors.code1}
-          </Text>
-        )}
         <View style={{marginTop: 100}}>
           <View>
-            <TouchableOpacity
+            <PurpleBtn
+              title={loading ? 'Loading...' : 'Submit Code'}
               onPress={submitcode}
-              style={[styles.btn, loading && styles.loadbtn]}>
-              <Text style={styles.text}>
-                {loading ? 'Loading...' : 'Submit Code'}
-              </Text>
-            </TouchableOpacity>
+              disabled={loading}
+            />
           </View>
         </View>
       </View>
@@ -213,13 +133,6 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     marginRight: pixelSizeVertical(20),
   },
-  lable: {
-    color: 'black',
-    fontSize: fontPixel(16),
-    fontWeight: '500',
-    marginVertical: pixelSizeVertical(10),
-    lineHeight: 22.4,
-  },
   inputParent: {
     marginTop: pixelSizeHorizontal(30),
     display: 'flex',
@@ -227,35 +140,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: pixelSizeVertical(30),
   },
-  btn: {
-    backgroundColor: '#6A3EA1',
-    paddingVertical: pixelSizeVertical(15),
-    paddingHorizontal: pixelSizeHorizontal(20),
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 100,
-    width: widthPixel(328),
-    height: heightPixel(54),
-  },
-  text: {
-    color: 'white',
-    fontSize: fontPixel(16),
-    fontWeight: '500',
-    lineHeight: 22.4,
-    fontFamily: 'Inter',
-  },
   codeInput: {
     width: widthPixel(50),
     height: heightPixel(50),
     borderWidth: 1,
-    borderColor: 'gray',
     fontSize: fontPixel(20),
-    textAlign: 'center',
     borderRadius: 5,
     marginRight: pixelSizeVertical(10),
-    color: 'black',
+    color: COLOR.black,
   },
   loadbtn: {
     backgroundColor: 'gray',

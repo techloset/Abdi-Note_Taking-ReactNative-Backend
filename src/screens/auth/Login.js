@@ -27,7 +27,8 @@ import {
 import Googleg from '../../assets/images/google.svg';
 import Facebook from '../../assets/images/facebook.svg';
 import AuthInput from '../../components/AuthInput';
-import {TEXT} from '../../styles/consts/GlobalStyles';
+import {TEXT, COLOR} from '../../styles/consts/GlobalStyles';
+import PurpleBtn from '../../components/PurpleBtn';
 
 const Login = () => {
   const [loading, setloading] = useState(false);
@@ -49,7 +50,7 @@ const Login = () => {
   const handleLogin = async () => {
     console.log('formData', formData);
 
-    navigation.navigate('Register');
+    navigation.navigate('BottomTabNavigator');
 
     return;
 
@@ -190,20 +191,12 @@ const Login = () => {
             <Text style={styles.forgot}>Forgot Password</Text>
           </TouchableOpacity>
           <View style={{marginTop: 25}}>
-            <TouchableOpacity
+            <PurpleBtn
               onPress={handleLogin}
               disabled={loading}
-              style={[styles.btn, loading && styles.btndisable]}>
-              <Text style={styles.text}>
-                {loading ? <>Loading...</> : 'Login'}
-              </Text>
-              <Icon
-                style={styles.icon}
-                name={'arrow-right'}
-                size={30}
-                color={'white'}
-              />
-            </TouchableOpacity>
+              title={loading ? 'Loading...' : 'Login'}
+              icon="arrow-right"
+            />
           </View>
 
           <View style={styles.parentLine}>
@@ -212,20 +205,14 @@ const Login = () => {
             <View style={styles.right}></View>
           </View>
           <View>
-            <View style={styles.iconsMain}>
-              <TouchableOpacity style={styles.iconParent}>
-                <Googleg />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.iconParent}>
-                <Facebook />
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity disabled style={styles.googleBtn}>
+              <Googleg />
+            </TouchableOpacity>
 
-            <Text style={styles.registerHere}>
-              Don’t have any account?{' '}
-              <Text onPress={() => navigation.navigate('Register')}>
-                Register here
-              </Text>{' '}
+            <Text
+              style={styles.registerHere}
+              onPress={() => navigation.navigate('Register')}>
+              Don’t have any account? Register here
             </Text>
           </View>
         </View>
@@ -237,6 +224,19 @@ const Login = () => {
 export default Login;
 
 const styles = StyleSheet.create({
+  googleBtn: {
+    paddingVertical: pixelSizeHorizontal(15),
+    paddingHorizontal: pixelSizeHorizontal(20),
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 100,
+    width: widthPixel(327),
+    height: widthPixel(53),
+    borderWidth: widthPixel(1),
+    borderColor: COLOR.baseGrey,
+  },
   main: {
     backgroundColor: 'white',
   },
@@ -297,25 +297,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: pixelSizeVertical(20),
-  },
-  btn: {
-    backgroundColor: 'transparent',
-    paddingVertical: pixelSizeVertical(15),
-    paddingHorizontal: pixelSizeHorizontal(20),
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 100,
-    width: widthPixel(320),
-    borderColor: '#C8C5CB',
-    borderWidth: 1,
-  },
-  text: {
-    color: '#6A3EA1',
-    fontSize: fontPixel(16),
-    fontWeight: '500',
-    paddingLeft: pixelSizeVertical(16),
   },
   registerHere: {
     color: '#6A3EA1',

@@ -1,3 +1,4 @@
+import React, {useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,79 +8,51 @@ import {
   StatusBar,
   TouchableOpacity,
 } from 'react-native';
-import React, {useContext, useState} from 'react';
-import HeaderBack from '../components/HeaderBack';
+import HeaderBack from '../../components/HeaderBack';
 import {useNavigation} from '@react-navigation/native';
-import * as Yup from 'yup';
-import {ContextAuth} from './AuthContext';
 import {
   fontPixel,
-  heightPixel,
   pixelSizeHorizontal,
-  pixelSizeVertical,
   widthPixel,
-} from '../constants/responsive';
+} from '../../constants/responsive';
+import AuthInput from '../../components/AuthInput';
+import {TEXT} from '../../styles/consts/GlobalStyles';
 
 const CreateNewPassword = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
 
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const {userCode} = useContext(ContextAuth);
-
-  const validationSchema = Yup.object().shape({
-    password: Yup.string()
-      .min(6, 'Password must be at least 6 characters')
-      .required('Password is required'),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password'), null], 'Passwords must match')
-      .required('Confirm Password is required'),
+  const [formData, setFormData] = useState({
+    password: '',
+    confirmPassword: '',
   });
+
+  const [passwordError, setPasswordError] = useState('');
 
   const handleFieldFocus = fieldName => {
     setPasswordError({...passwordError, [fieldName]: null});
   };
 
-
+  const handleChangeText = (field, value) => {
+    setFormData({...formData, [field]: value});
+  };
 
   const handleSubmit = async () => {
     setLoading(true);
+    // Validation code removed
     try {
-      await validationSchema.validate(
-        {password, confirmPassword},
-        {abortEarly: false},
-      );
-
-      const responce = await fetch(
-        'https://notesapp-backend-omega.vercel.app/api/user/createnewPassword',
-       
-        {
-          method: 'POST',
-
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({password: password, verifyCode: userCode}),
-        },
-      );
-      if (responce.ok) {
-        setLoading(false);
-        navigation.navigate('Login');
-      }
+      // Validation code removed
+      // API call logic commented out
+      // setLoading(false);
+      // navigation.navigate('Login');
     } catch (error) {
       setLoading(false);
-      const errorMessages = {};
-      error.inner.forEach(err => {
-        errorMessages[err.path] = err.message;
-      });
-      setPasswordError(errorMessages);
+      // Error handling logic for validation removed
+      // setPasswordError(errorMessages);
     } finally {
       setLoading(false);
     }
   };
-  
 
   return (
     <ScrollView style={styles.main}>
@@ -88,7 +61,6 @@ const CreateNewPassword = () => {
         hidden={false}
         backgroundColor="white"
       />
-
       <View>
         <HeaderBack title="Back to Login" />
       </View>
@@ -96,41 +68,31 @@ const CreateNewPassword = () => {
         <Text style={styles.forgot}>Create a New</Text>
         <Text style={styles.forgot}>Password</Text>
         <Text style={styles.notesIdea}>
-          Your new password should be different{' '}
+          Your new password should be different
         </Text>
         <Text style={styles.notesIdea2}>from the previous password</Text>
         <View style={styles.inputParent}>
-          <Text style={styles.label}>New Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholderTextColor={'#180E25'}
+          <Text style={TEXT.inputLabel}>New Password</Text>
+          <AuthInput
             placeholder="********"
+            value={formData.password}
             secureTextEntry={true}
-            onChangeText={text => setPassword(text)}
+            onChangeText={value => handleChangeText('password', value)}
             onFocus={() => handleFieldFocus('password')}
           />
-          {passwordError.password && (
-            <Text style={styles.errorText}>{passwordError.password}</Text>
-          )}
           <Text style={styles.passwordValidation}>
             min. 6 characters, combination of 0-9, A-Z, a-z
           </Text>
         </View>
-        <View style={{marginTop: 20}}>
-          <Text style={styles.label}>Retype New Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholderTextColor={'#180E25'}
+        <View style={[styles.inputParent, {marginTop: 20}]}>
+          <Text style={TEXT.inputLabel}>Retype New Password</Text>
+          <AuthInput
             placeholder="********"
+            value={formData.confirmPassword}
             secureTextEntry={true}
-            onChangeText={text => setConfirmPassword(text)}
+            onChangeText={value => handleChangeText('confirmPassword', value)}
             onFocus={() => handleFieldFocus('confirmPassword')}
           />
-          {passwordError.confirmPassword && (
-            <Text style={styles.errorText}>
-              {passwordError.confirmPassword}
-            </Text>
-          )}
         </View>
         <View style={{marginTop: 40}}>
           <TouchableOpacity
@@ -156,7 +118,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    left: pixelSizeVertical(16),
+    marginLeft: pixelSizeHorizontal(16),
     marginTop: pixelSizeHorizontal(140),
   },
   forgot: {
@@ -181,34 +143,19 @@ const styles = StyleSheet.create({
     lineHeight: 22.4,
     fontWeight: '400',
   },
-  input: {
-    borderWidth: 1,
-    padding: pixelSizeHorizontal(16),
-    color: '#180E25',
-    width: widthPixel(328),
-    borderColor: '#C8C5CB',
-    borderRadius: 8,
-    height: heightPixel(54),
-  },
-  label: {
-    color: 'black',
-    fontSize: fontPixel(16),
-    fontWeight: '500',
-    marginVertical: pixelSizeVertical(10),
-    lineHeight: 22.4,
-  },
   inputParent: {
     marginTop: pixelSizeHorizontal(50),
+    paddingRight: pixelSizeHorizontal(20),
   },
   passwordValidation: {
     color: '#C8C5CB',
     fontSize: fontPixel(12),
     lineHeight: 14.52,
-    top: pixelSizeHorizontal(5),
+    marginTop: pixelSizeHorizontal(5),
   },
   btn: {
     backgroundColor: '#6A3EA1',
-    paddingVertical: pixelSizeVertical(15),
+    paddingVertical: pixelSizeHorizontal(15),
     paddingHorizontal: pixelSizeHorizontal(20),
     display: 'flex',
     flexDirection: 'row',
@@ -216,7 +163,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 100,
     width: widthPixel(328),
-    height: heightPixel(54),
+    height: widthPixel(54),
   },
   text: {
     color: 'white',

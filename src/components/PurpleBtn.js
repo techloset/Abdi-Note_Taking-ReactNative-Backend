@@ -1,44 +1,48 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome6';
-const PurpleBtn = (props) => {
-  return (
-    <View>
-    <TouchableOpacity  style={styles.btn}>
-      <Text style={styles.text}>{props.title}</Text>
-      <Icon style={styles.icon} name={props.icon} size={30} color={props.color} />
-    </TouchableOpacity>
-  </View>
-  )
-}
+import {
+  fontPixel,
+  pixelSizeHorizontal,
+  widthPixel,
+} from '../constants/responsive';
+import {COLOR} from '../styles/consts/GlobalStyles';
 
-export default PurpleBtn
+const PurpleBtn = ({title, icon, iconColor, onPress, disabled}) => {
+  return (
+    <TouchableOpacity onPress={onPress} disabled={disabled} style={styles.btn}>
+      <Icon style={styles.icon} name={null} size={30} color={iconColor} />
+      <Text style={styles.text}>{title}</Text>
+      <Icon style={styles.icon} name={icon} size={30} color={iconColor} />
+    </TouchableOpacity>
+  );
+};
+
+export default PurpleBtn;
 
 const styles = StyleSheet.create({
-    btn: {
-        backgroundColor: '#6A3EA1',
-        paddingVertical: 15,
-        paddingHorizontal: 20,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: "space-between",
-        alignItems:"center",
-        borderRadius: 100,
-        width: 328,
-        height:54,
-      },
-      text: {
-        color: 'white',
-        fontSize: 16,
-        fontWeight: '500',
-        paddingLeft: 115,
-        lineHeight: 22.4,
-        fontFamily:'Inter'
-      },
-      icon: {
-        fontSize: 20,
-        textAlign: 'right',
-        paddingLeft: 40,
-        
-      }
-})
+  btn: {
+    backgroundColor: COLOR.purple,
+    paddingVertical: pixelSizeHorizontal(15),
+    paddingHorizontal: pixelSizeHorizontal(20),
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderRadius: 100,
+    width: widthPixel(328),
+    height: widthPixel(54),
+  },
+  text: {
+    color: COLOR.white,
+    fontSize: fontPixel(16),
+    fontWeight: '500',
+    lineHeight: fontPixel(22.4),
+    fontFamily: 'Inter',
+    // paddingRight: pixelSizeHorizontal(30),
+  },
+  icon: {
+    fontSize: 20,
+    textAlign: 'right',
+  },
+});

@@ -26,12 +26,6 @@ const Register = () => {
   const navigation = useNavigation();
 
   const [loading, setloading] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState({
-    name: null,
-    email: null,
-    password: null,
-    confirmPassword: null,
-  });
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -200,23 +194,6 @@ const styles = StyleSheet.create({
     fontSize: fontPixel(16),
     marginTop: pixelSizeHorizontal(10),
     fontFamily: 'Inter',
-    lineHeight: 22.4,
-  },
-  input: {
-    borderWidth: 1,
-    padding: pixelSizeHorizontal(16),
-    color: '#180E25',
-    width: widthPixel(328),
-    borderColor: '#C8C5CB',
-    borderRadius: 8,
-    height: heightPixel(54),
-  },
-
-  lable: {
-    color: 'black',
-    fontSize: fontPixel(16),
-    fontWeight: '500',
-    marginVertical: pixelSizeVertical(10),
     lineHeight: 22.4,
   },
   inputParent: {

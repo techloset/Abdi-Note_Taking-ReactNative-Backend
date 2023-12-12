@@ -30,7 +30,7 @@ export default AuthInput;
 const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
-    padding: pixelSizeHorizontal(16),
+    padding: pixelSizeHorizontal(20),
     color: '#180E25',
     width: '100%',
     borderColor: '#C8C5CB',
