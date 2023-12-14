@@ -19,6 +19,8 @@ import {
   pixelSizeVertical,
   widthPixel,
 } from '../../constants/responsive';
+import {COLOR, TEXT} from '../../styles/consts/GlobalStyles';
+import AuthInput from '../../components/AuthInput';
 
 const Register = () => {
   const navigation = useNavigation();
@@ -36,17 +38,19 @@ const Register = () => {
     password: '',
     confirmPassword: '',
   });
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(true);
 
-  const handleInputChange = (fieldName, text) => {
-    setFormData({...formData, [fieldName]: text});
-  };
-
-  const handleFieldFocus = fieldName => {
-    setFieldErrors({...fieldErrors, [fieldName]: null});
+  const handleChangeText = (field, text) => {
+    setFormData({
+      ...formData,
+      [field]: text,
+    });
   };
 
   const handleRegister = async () => {
+    console.log('formData', formData);
+
+    return;
     try {
       // Validation logic here (you may implement your own validation logic)
       // ...
@@ -100,47 +104,30 @@ const Register = () => {
           <Text style={styles.reg}>Register</Text>
           <Text style={styles.notesIdea}>And start taking notes</Text>
           <View style={styles.inputParent}>
-            <Text style={styles.lable}>Full Name</Text>
-            <TextInput
-              value={formData.name}
-              onChangeText={text => handleInputChange('name', text)}
-              style={styles.input}
-              placeholderTextColor={'#C8C5CB'}
+            <Text style={TEXT.inputLabel}>Full Name</Text>
+            <AuthInput
               placeholder="Example: John Doe"
-              onFocus={() => handleFieldFocus('name')}
+              value={formData.name}
+              onChangeText={value => handleChangeText('name', value)}
             />
           </View>
-          {fieldErrors.name && (
-            <Text style={{color: 'red', fontSize: 10}}>{fieldErrors.name}</Text>
-          )}
           <View style={styles.inputParent}>
-            <Text style={styles.lable}>Email Address</Text>
-            <TextInput
-              value={formData.email}
-              onChangeText={text => handleInputChange('email', text)}
-              style={styles.input}
-              placeholderTextColor={'#C8C5CB'}
+            <Text style={TEXT.inputLabel}>Email Address</Text>
+            <AuthInput
               placeholder="Example: johndoe@gmail.com"
-              onFocus={() => handleFieldFocus('email')}
+              value={formData.email}
+              onChangeText={value => handleChangeText('email', value)}
+              keyboardType="email-address"
             />
           </View>
-          {fieldErrors.email && (
-            <Text style={{color: 'red', fontSize: 10}}>
-              {fieldErrors.email}
-            </Text>
-          )}
           <View style={styles.inputParent}>
-            <Text style={styles.lable}>Password</Text>
-            <TextInput
-              value={formData.password}
-              onChangeText={text => handleInputChange('password', text)}
-              style={styles.input}
-              placeholderTextColor={'#C8C5CB'}
+            <Text style={TEXT.inputLabel}>Password</Text>
+            <AuthInput
               placeholder="********"
+              value={formData.password}
+              onChangeText={value => handleChangeText('password', value)}
               secureTextEntry={!showPassword}
-              onFocus={() => handleFieldFocus('password')}
             />
-
             <View style={styles.iconParent}>
               <TouchableOpacity
                 onPress={() => setShowPassword(!showPassword)}
@@ -154,28 +141,15 @@ const Register = () => {
             </View>
           </View>
 
-          {fieldErrors.password && (
-            <Text style={{color: 'red', fontSize: 10}}>
-              {fieldErrors.password}
-            </Text>
-          )}
           <View style={styles.inputParent}>
-            <Text style={styles.lable}>Retype Password</Text>
-            <TextInput
-              secureTextEntry={true}
-              value={formData.confirmPassword}
-              onChangeText={text => handleInputChange('confirmPassword', text)}
-              style={styles.input}
-              placeholderTextColor={'#C8C5CB'}
+            <Text style={TEXT.inputLabel}>Retype Password</Text>
+            <AuthInput
               placeholder="********"
-              onFocus={() => handleFieldFocus('confirmPassword')}
+              value={formData.password}
+              onChangeText={value => handleChangeText('confirmPassword', value)}
+              secureTextEntry={true}
             />
           </View>
-          {fieldErrors.confirmPassword && (
-            <Text style={{color: 'red', fontSize: 10}}>
-              {fieldErrors.confirmPassword}
-            </Text>
-          )}
 
           <View style={{marginTop: 30}}>
             <View>

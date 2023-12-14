@@ -26,44 +26,29 @@ import {
 } from '../../constants/responsive';
 import Googleg from '../../assets/images/google.svg';
 import Facebook from '../../assets/images/facebook.svg';
+import AuthInput from '../../components/AuthInput';
+import {TEXT} from '../../styles/consts/GlobalStyles';
 
 const Login = () => {
   const [loading, setloading] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [fieldErrors, setFieldErrors] = useState({
-    email: null,
-    password: null,
-  });
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-  const [googleLogin, setGoogleLogin] = useState(null);
+  // const [googleLogin, setGoogleLogin] = useState(null);
   const navigation = useNavigation();
 
-  const handleInputChange = (fieldName, text) => {
-    setFormData({...formData, [fieldName]: text});
-  };
-
-  const handleFieldFocus = fieldName => {
-    setFieldErrors({...fieldErrors, [fieldName]: null});
+  const handleChangeText = (field, text) => {
+    setFormData({
+      ...formData,
+      [field]: text,
+    });
   };
 
   const handleLogin = async () => {
-    try {
-      await validationSchema.validate(formData, {abortEarly: false});
+    console.log('formData', formData);
 
-      handleSubmit();
-    } catch (errors) {
-      const errorMessages = {};
-      errors.inner.forEach(error => {
-        errorMessages[error.path] = error.message;
-      });
-      setFieldErrors(errorMessages);
-    }
-  };
-
-  const handleSubmit = async () => {
     navigation.navigate('Register');
 
     return;
@@ -110,10 +95,6 @@ const Login = () => {
     } finally {
       setloading(false);
     }
-  };
-
-  const LoginBTN = () => {
-    navigation.navigate('Register');
   };
 
   // const signInGoogle = async () => {
@@ -175,10 +156,6 @@ const Login = () => {
   //   return auth().signInWithCredential(facebookCredential);
   // }
 
-  const forgotPassword = () => {
-    navigation.navigate('ForgotPassword');
-  };
-
   return (
     <ScrollView style={styles.main}>
       <View style={styles.container}>
@@ -191,36 +168,25 @@ const Login = () => {
           <Text style={styles.login}>Let's Login</Text>
           <Text style={styles.notesIdea}>And notes your idea</Text>
           <View style={styles.inputParent}>
-            <Text style={styles.lable}>Email Address</Text>
-            <TextInput
-              onFocus={() => handleFieldFocus('email')}
-              onChangeText={text => handleInputChange('email', text)}
-              style={styles.input}
-              placeholderTextColor={'#C8C5CB'}
+            <Text style={TEXT.inputLabel}>Email Address</Text>
+            <AuthInput
               placeholder="Example: johndoe@gmail.com"
+              value={formData.email}
+              keyboardType="email-address"
+              onChangeText={value => handleChangeText('email', value)}
             />
           </View>
-          {fieldErrors.email && (
-            <Text style={{color: 'red', fontSize: 10}}>
-              {fieldErrors.email}
-            </Text>
-          )}
           <View style={styles.inputParent}>
-            <Text style={styles.lable}>Password</Text>
-            <TextInput
-              onFocus={() => handleFieldFocus('password')}
-              onChangeText={text => handleInputChange('password', text)}
-              style={styles.input}
-              placeholderTextColor={'#C8C5CB'}
+            <Text style={TEXT.inputLabel}>Password</Text>
+            <AuthInput
               placeholder="********"
+              value={formData.password}
+              secureTextEntry={true}
+              onChangeText={value => handleChangeText('password', value)}
             />
           </View>
-          {fieldErrors.password && (
-            <Text style={{color: 'red', fontSize: 10}}>
-              {fieldErrors.password}
-            </Text>
-          )}
-          <TouchableOpacity onPress={forgotPassword}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ForgotPassword')}>
             <Text style={styles.forgot}>Forgot Password</Text>
           </TouchableOpacity>
           <View style={{marginTop: 25}}>
@@ -247,21 +213,19 @@ const Login = () => {
           </View>
           <View>
             <View style={styles.iconsMain}>
-              <TouchableOpacity
-                // onPress={() => signInGoogle()}
-                style={styles.iconParent}>
+              <TouchableOpacity style={styles.iconParent}>
                 <Googleg />
               </TouchableOpacity>
-              <TouchableOpacity
-                // onPress={() => onFacebookButtonPress()}
-                style={styles.iconParent}>
+              <TouchableOpacity style={styles.iconParent}>
                 <Facebook />
               </TouchableOpacity>
             </View>
 
             <Text style={styles.registerHere}>
               Don’t have any account?{' '}
-              <Text onPress={LoginBTN}>Register here</Text>{' '}
+              <Text onPress={() => navigation.navigate('Register')}>
+                Register here
+              </Text>{' '}
             </Text>
           </View>
         </View>
@@ -295,23 +259,7 @@ const styles = StyleSheet.create({
     marginTop: pixelSizeHorizontal(20),
     fontFamily: 'Inter',
   },
-  input: {
-    borderWidth: 1,
-    padding: pixelSizeHorizontal(16),
-    color: '#180E25',
-    width: widthPixel(328),
-    borderColor: '#C8C5CB',
-    borderRadius: 8,
-    height: heightPixel(54),
-  },
 
-  lable: {
-    color: 'black',
-    fontSize: fontPixel(16),
-    fontWeight: '500',
-    marginVertical: pixelSizeVertical(10),
-    lineHeight: 22.4,
-  },
   inputParent: {
     marginTop: pixelSizeHorizontal(20),
   },
