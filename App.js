@@ -1,14 +1,9 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
+import NativeStack from './src/navigation/NativeStack';
 
-const App = () => {
-  return (
-    <View>
-      <Text>App</Text>
-    </View>
-  );
-};
-
-export default App;
+export default function App() {
+  return <NativeStack />;
+}
 
 const styles = StyleSheet.create({});
