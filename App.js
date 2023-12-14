@@ -1,9 +1,15 @@
-import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import NativeStack from './src/navigation/NativeStack';
+import HomeScreen from './src/screens/HomeScreen';
+import {NavigationContainer} from '@react-navigation/native';
+import StackNavigation from './src/navigation/StackNavigation';
+import OnboardingScreen from './src/screens/OnboardingScreen';
 
-export default function App() {
-  return <NativeStack />;
-}
+const App = () => {
+  return (
+    <NavigationContainer>
+      <StackNavigation />
+    </NavigationContainer>
+  );
+};
 
-const styles = StyleSheet.create({});
+export default App;
