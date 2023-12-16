@@ -20,8 +20,8 @@ import Modal from 'react-native-modal';
 import React, {useState, useContext, useEffect} from 'react';
 import IconA from 'react-native-vector-icons/AntDesign';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {ContextAuth} from '../auth/AuthContext';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {useAuth} from '../auth/AuthContext';
+// import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useRoute} from '@react-navigation/native';
 import {
@@ -33,117 +33,7 @@ import {
 } from '../constants/responsive';
 
 const Settings = () => {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const [isEnabled2, setIsEnabled2] = useState(false);
-
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [isModalVisibleLogout, setModalVisibleLogout] = useState(false);
-
-  const [userData, setUserData] = useState('');
-  const [profileImage, setProfileImage] = useState(null);
-  const [userInfog, setuserInfog] = useState();
-  const [isLoading, setIsLoading] = useState(true);
-  const route = useRoute();
-
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
-  const toggleSwitch2 = () => setIsEnabled2(previousState => !previousState);
-
-  useEffect(() => {
-    async function checkLoginStatus() {
-      try {
-        const storedData = await AsyncStorage.getItem('UserData');
-        const userData = JSON.parse(storedData);
-        setUserData(userData);
-
-        if (route.params && route.params.updatedUserData) {
-          const updatedUserData = route.params.updatedUserData;
-          setUserData(updatedUserData);
-        }
-      } catch (error) {
-        console.error('Error checking login status: ', error);
-      }
-    }
-
-    checkLoginStatus();
-    getProfileImage();
-    const profileImageChangedListener = DeviceEventEmitter.addListener(
-      'profileImageChanged',
-      newProfileImage => {
-        setProfileImage(newProfileImage);
-      },
-    );
-
-    return () => {
-      profileImageChangedListener.remove();
-    };
-  }, [route.params]);
-
-  const getGoogleUser = async () => {
-    try {
-      let googleData = await AsyncStorage.getItem('GoogleUserData');
-      setuserInfog(JSON.parse(googleData));
-      setIsLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      getGoogleUser();
-    }, []),
-  );
-
-  const editProfile = () => {
-    navigation.navigate('EditProfile');
-  };
-
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
-
-  const toggleLogout = () => {
-    setModalVisibleLogout(!isModalVisibleLogout);
-  };
-
-  const navigation = useNavigation();
-
-  const {userInfo, AuthData} = useContext(ContextAuth);
-
-  const signOut = async () => {
-    try {
-      await delToken();
-      if (userInfog) {
-        if (GoogleSignin.hasPlayServices()) {
-          await GoogleSignin.signOut();
-        }
-      }
-      navigation.navigate('Login');
-    } catch (error) {
-      console.error(error);
-    }
-    console.log('Logout');
-  };
-
-  const delToken = async () => {
-    const deleteToken = await AsyncStorage.removeItem('Token');
-    const deleteid = await AsyncStorage.removeItem('GoogleId');
-    const deleteUserData = await AsyncStorage.removeItem('GoogleUserData');
-    const removeImage = await AsyncStorage.removeItem('Profile');
-  };
-
-  const getProfileImage = async () => {
-    try {
-      const uri = await AsyncStorage.getItem('Profile');
-      setProfileImage(uri);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const GoChangePassword = () => {
-    navigation.navigate('ForgotPassword');
-  };
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <>
@@ -167,7 +57,7 @@ const Settings = () => {
 
             <View style={styles.ProfileInfo}>
               <View>
-                {userInfog ? (
+                {/* {userInfog ? (
                   <Image
                     source={{uri: userInfog.photo}}
                     style={{width: 65, height: 65, borderRadius: 100}}
@@ -181,15 +71,16 @@ const Settings = () => {
                     }
                     style={{width: 65, height: 65, borderRadius: 100}}
                   />
-                )}
+                )} */}
               </View>
 
               <View style={{marginTop: 10}}>
-                {userInfog ? (
-                  <Text style={styles.name}> {userInfog.name}</Text>
+                {/* {userInfog ? (
+                  // <Text style={styles.name}> {userInfog.name}</Text>
+                  ''
                 ) : (
                   <Text style={styles.name}> {userData.name}</Text>
-                )}
+                )} */}
                 <View style={{display: 'flex', flexDirection: 'row', gap: 6}}>
                   <Icon
                     name="mail"
@@ -198,17 +89,18 @@ const Settings = () => {
                     style={{marginTop: 3}}
                   />
                   <Text style={{fontSize: 12, color: '#827D89'}}>
-                    {userInfog ? (
-                      <Text> {userInfog.email}</Text>
+                    {/* {userInfog ? (
+                      // <Text> {userInfog.email}</Text>
+                      ''
                     ) : (
                       <Text> {userData.email}</Text>
-                    )}
+                    )} */}
                   </Text>
                 </View>
               </View>
             </View>
             <View style={{marginHorizontal: 16, marginTop: 20}}>
-              <TouchableOpacity style={styles.editBtn} onPress={editProfile}>
+              <TouchableOpacity style={styles.editBtn}>
                 <View style={{display: 'flex', flexDirection: 'row'}}>
                   <Icon
                     name="edit"
@@ -224,7 +116,7 @@ const Settings = () => {
             <View style={styles.appSetting}>
               <Text style={styles.setting}>APP SETTINGS</Text>
             </View>
-            <TouchableOpacity onPress={GoChangePassword}>
+            <TouchableOpacity>
               <View style={styles.parentlist}>
                 <View style={{display: 'flex', flexDirection: 'row'}}>
                   <IconF
@@ -263,7 +155,7 @@ const Settings = () => {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={toggleModal}>
+            <TouchableOpacity>
               <View style={styles.parentlist}>
                 <View style={{display: 'flex', flexDirection: 'row'}}>
                   <Icon
@@ -284,7 +176,7 @@ const Settings = () => {
 
             <View style={[styles.line, styles.line2]}></View>
 
-            <TouchableOpacity onPress={toggleLogout}>
+            <TouchableOpacity>
               <View
                 style={{
                   display: 'flex',
@@ -310,7 +202,7 @@ const Settings = () => {
       )}
 
       <View>
-        <Modal style={styles.model} isVisible={isModalVisible}>
+        <Modal style={styles.model}>
           <View style={{display: 'flex', alignItems: 'flex-end'}}>
             <View
               style={{
@@ -318,12 +210,7 @@ const Settings = () => {
                 padding: 6,
                 borderRadius: 100,
               }}>
-              <IconA
-                name="close"
-                size={14}
-                color={'black'}
-                onPress={toggleModal}
-              />
+              <IconA name="close" size={14} color={'black'} />
             </View>
           </View>
           <View style={[styles.parentlist, styles.modelNotify]}>
@@ -336,10 +223,7 @@ const Settings = () => {
               <View style={{display: 'flex', flexDirection: 'row'}}>
                 <Switch
                   trackColor={{false: '#EFE9F7', true: '#EFE9F7'}}
-                  thumbColor={isEnabled ? '#6A3EA1' : '#EFE9F7'}
                   ios_backgroundColor="#3e3e3e"
-                  onValueChange={toggleSwitch}
-                  value={isEnabled}
                 />
               </View>
             </View>
@@ -356,10 +240,7 @@ const Settings = () => {
                 <View style={styles.container}>
                   <Switch
                     trackColor={{false: '#EFE9F7', true: '#EFE9F7'}}
-                    thumbColor={isEnabled2 ? '#6A3EA1' : '#EFE9F7'}
                     ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch2}
-                    value={isEnabled2}
                   />
                 </View>
               </View>
@@ -369,7 +250,7 @@ const Settings = () => {
       </View>
 
       <View>
-        <Modal style={styles.model2} isVisible={isModalVisibleLogout}>
+        <Modal style={styles.model2}>
           <View style={styles.modelDiv}>
             <View>
               <Text style={styles.logouttext}>Log Out</Text>
@@ -379,14 +260,10 @@ const Settings = () => {
                 </Text>
               </View>
               <View style={styles.btnsParent}>
-                <TouchableOpacity
-                  onPress={toggleLogout}
-                  style={styles.cencelbtn}>
+                <TouchableOpacity style={styles.cencelbtn}>
                   <Text style={styles.cencelbtntext}>Cancel</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={signOut}
-                  style={[styles.cencelbtn, styles.yesBtn]}>
+                <TouchableOpacity style={[styles.cencelbtn, styles.yesBtn]}>
                   <Text style={[styles.cencelbtntext, styles.yesText]}>
                     Yes
                   </Text>
@@ -421,6 +298,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: pixelSizeHorizontal(13),
     lineHeight: 22.4,
+    width: '35%',
   },
   ProfileInfo: {
     marginLeft: pixelSizeVertical(16),

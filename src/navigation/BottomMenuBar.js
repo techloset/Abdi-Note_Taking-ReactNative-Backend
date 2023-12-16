@@ -1,11 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Linking
-
-} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, Linking} from 'react-native';
 import React, {useState, useCallback} from 'react';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconF from 'react-native-vector-icons/Feather';
@@ -13,13 +6,14 @@ import IconM from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconMa from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 import Modal from 'react-native-modal';
-import Model from "../assects/images/model.svg"
-
+import Model from '../assets/images/model.svg';
+import {COLOR} from '../styles/consts/GlobalStyles';
 
 const openAlarmApp = () => {
-  const alarmAppUrl = 'https://play.google.com/store/apps/details?id=ar.com.basejuegos.simplealarm&pcampaignid=web_share';
+  const alarmAppUrl =
+    'https://play.google.com/store/apps/details?id=ar.com.basejuegos.simplealarm&pcampaignid=web_share';
 
-  Linking.canOpenURL(alarmAppUrl).then((supported) => {
+  Linking.canOpenURL(alarmAppUrl).then(supported => {
     if (supported) {
       Linking.openURL(alarmAppUrl);
     } else {
@@ -27,8 +21,6 @@ const openAlarmApp = () => {
     }
   });
 };
-
-
 
 const BottomMenuBar = () => {
   const [selectedColor, setSelectedColor] = useState(false);
@@ -50,19 +42,17 @@ const BottomMenuBar = () => {
     setSelectedColor(true);
   };
 
-function handledelete() {
-  Toast.error("Notes Not be Availabel")
-}
+  function handledelete() {
+    Toast.error('Notes Not be Availabel');
+  }
 
-function openLanguageSettings() {
-  Toast.error("Only English Language Availabel")
-  
-}
+  function openLanguageSettings() {
+    Toast.error('Only English Language Availabel');
+  }
 
   return (
     <>
       <View>
-        
         <Modal style={styles.model} isVisible={isModalVisible}>
           <View style={{display: 'flex', alignItems: 'flex-end'}}>
             <View
@@ -81,7 +71,6 @@ function openLanguageSettings() {
           </View>
           <View>
             <Text style={styles.changeBackground}>CHANGE BACKGROUND</Text>
-         
           </View>
           <View style={styles.colosparent}>
             <View onPress={applyBorder}>
@@ -154,7 +143,7 @@ function openLanguageSettings() {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={openLanguageSettings} >
+            <TouchableOpacity onPress={openLanguageSettings}>
               <View style={styles.parentlist}>
                 <View style={{display: 'flex', flexDirection: 'row'}}>
                   <IconF
@@ -257,7 +246,7 @@ function openLanguageSettings() {
             </View>
           </View>
           <View style={styles.images}>
-            <Model/>
+            <Model />
           </View>
           <Text style={styles.pinned}>Notes Pinned Successfully</Text>
 
@@ -280,31 +269,24 @@ function openLanguageSettings() {
       </View>
 
       <View style={styles.menuBar}>
-        <View style={styles.menuebarIcons}>
-          <View>
-            <Text style={styles.footer_text}>Last edited on 19.30</Text>
-          </View>
-          <View style={styles.icons}>
-            <Icon
-              name="search1"
+        <View>
+          <Text style={styles.footer_text}>Last edited on 19.30</Text>
+        </View>
+        <View style={styles.icons}>
+          <Icon name="search1" size={20} color={'black'} onPress={searchBar} />
+          <IconF
+            name="bookmark"
+            size={20}
+            color={'black'}
+            onPress={toggleModal2}
+          />
+          <View style={styles.dotsIcon}>
+            <IconM
+              name="dots-horizontal"
               size={20}
-              color={'black'}
-              onPress={searchBar}
+              color={'white'}
+              onPress={toggleModal}
             />
-            <IconF
-              name="bookmark"
-              size={20}
-              color={'black'}
-              onPress={toggleModal2}
-            />
-            <View style={styles.dotsIcon}>
-              <IconM
-                name="dots-horizontal"
-                size={20}
-                color={'white'}
-                onPress={toggleModal}
-              />
-            </View>
           </View>
         </View>
       </View>
@@ -319,13 +301,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor:"black"
-  },
-  menuBar: {
-    backgroundColor: 'white',
-    borderTopColor: '#EFEEF0',
-    borderTopWidth: 1,
-    height: 48,
+    backgroundColor: 'black',
   },
   footer_text: {
     fontWeight: '400',
@@ -333,14 +309,16 @@ const styles = StyleSheet.create({
     color: 'black',
     marginLeft: 20,
   },
-  menuebarIcons: {
-    display: 'flex',
+  menuBar: {
+    backgroundColor: COLOR.white,
+    borderTopColor: '#EFEEF0',
+    borderTopWidth: 1,
+    height: 48,
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   icons: {
-    display: 'flex',
     flexDirection: 'row',
     gap: 20,
     alignItems: 'center',
@@ -356,7 +334,7 @@ const styles = StyleSheet.create({
   },
 
   model: {
-    backgroundColor: 'white',
+    backgroundColor: COLOR.white,
     borderTopEndRadius: 16,
     borderTopStartRadius: 16,
     width: '100%',

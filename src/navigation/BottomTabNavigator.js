@@ -9,9 +9,9 @@ import HomeScreen from '../screens/HomeScreen';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import FinishedScreen from '../screens/FinishedScreen';
 import CreateNewNotes from '../screens/CreateNewNotes';
-// import SearchBar from '../screens/SearchBar';
-// import Settings from '../screens/Settings';
+import Settings from '../screens/Settings';
 import {StyleSheet, View} from 'react-native';
+import SearchBar from '../screens/SearchBar';
 
 const Tab = createBottomTabNavigator();
 
@@ -112,23 +112,47 @@ export default function BottomTabNavigator() {
         }}
       />
 
-      {/* 
-      <Tab.Screen name='SearchBar' component={SearchBar} options={{
-        tabBarStyle:{display:'none'},
-        tabBarLabel: "Search", tabBarActiveTintColor: '#6A3EA1', headerShown: false, tabBarIcon: ({ focused }) => focused ? (
-          <><IconsA name='search1' size={30} color="#6A3EA1" /></>) : (
-          <><IconsA name='search1' size={30} color="#827D89" /></>
-        )
-      }} />
+      <Tab.Screen
+        name="SearchBar"
+        component={SearchBar}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarLabel: 'Search',
+          tabBarActiveTintColor: '#6A3EA1',
+          headerShown: false,
+          tabBarIcon: ({focused}) =>
+            focused ? (
+              <>
+                <IconsA name="search1" size={30} color="#6A3EA1" />
+              </>
+            ) : (
+              <>
+                <IconsA name="search1" size={30} color="#827D89" />
+              </>
+            ),
+        }}
+      />
 
-
-      <Tab.Screen name='Settings' component={Settings} options={{
-         tabBarStyle:{display:'none'},
-        tabBarLabel: "Settings", tabBarActiveTintColor: '#6A3EA1', headerShown: false, tabBarIcon: ({ focused }) => focused ? (
-          <><IconsA name='setting' size={30} color="#6A3EA1" /></>) : (
-          <><IconsA name='setting' size={30} color="#827D89" /></>
-        )
-      }} /> */}
+      <Tab.Screen
+        name="Settings"
+        component={Settings}
+        options={{
+          tabBarStyle: {display: 'none'},
+          tabBarLabel: 'Settings',
+          tabBarActiveTintColor: '#6A3EA1',
+          headerShown: false,
+          tabBarIcon: ({focused}) =>
+            focused ? (
+              <>
+                <IconsA name="setting" size={30} color="#6A3EA1" />
+              </>
+            ) : (
+              <>
+                <IconsA name="setting" size={30} color="#827D89" />
+              </>
+            ),
+        }}
+      />
     </Tab.Navigator>
   );
 }
