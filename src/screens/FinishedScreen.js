@@ -4,7 +4,7 @@ import {
   fontPixel,
   pixelSizeHorizontal,
   widthPixel,
-} from '../constants/responsive';
+} from '../styles/consts/ratio';
 // svgs
 import {COMMON_STYLES, TEXT} from '../styles/consts/GlobalStyles';
 import Illustration from '../assets/images/finishedManAI.svg';

@@ -1,4 +1,4 @@
-import {fontPixel, pixelSizeVertical} from '../../constants/responsive';
+import {fontPixel, pixelSizeVertical} from '../../styles/consts/ratio';
 
 /* fonts */
 export const FONT_FAMILY = {

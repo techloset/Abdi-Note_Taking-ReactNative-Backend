@@ -1,12 +1,5 @@
-import React, {useContext, useRef, useState} from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, Text, View, ScrollView} from 'react-native';
 import HeaderBack from '../../components/HeaderBack';
 import {useNavigation} from '@react-navigation/native';
 import {
@@ -15,60 +8,18 @@ import {
   pixelSizeHorizontal,
   pixelSizeVertical,
   widthPixel,
-} from '../../constants/responsive';
+} from '../../styles/consts/ratio';
 // import OTPTextView from 'react-native-otp-textinput';
 import {COLOR} from '../../styles/consts/GlobalStyles';
 import PurpleBtn from '../../components/PurpleBtn';
+import OTPInputView from '@twotalltotems/react-native-otp-input';
 
 const EmailCode = () => {
-  const navigation = useNavigation();
   const [validationErrors, setValidationErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // const [otp, setOtp] = useState('');
-
-  // Commented out API request code, replace with your implementation
-  // const { verifyCode } = useContext(ContextAuth);
-  // verifyCode(code);
-
   const submitcode = async () => {
-    // console.log('otp', otp);
-
     return;
-
-    // setLoading(true);
-    try {
-      // Commented out Yup validation, replace with your own validation logic
-      // await validationSchema.validate(
-      //   { code1, code2, code3, code4 },
-      //   { abortEarly: false },
-      // );
-      // Replace the following with your API request logic
-      // const code = code1 + code2 + code3 + code4;
-      // const responce = await fetch(
-      //   'Your API Endpoint',
-      //   {
-      //     method: 'POST',
-      //     headers: { 'content-type': 'application/json' },
-      //     body: JSON.stringify({
-      //       verifyCode: code,
-      //     }),
-      //   },
-      // );
-      // if (responce.ok) {
-      //   setLoading(false);
-      //   const res = await responce.json();
-      //   navigation.navigate('CreateNewPassword');
-      // }
-    } catch (error) {
-      setLoading(false);
-      const errors = {};
-      // Handle errors
-      // ...
-      setValidationErrors(errors);
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (
@@ -83,7 +34,7 @@ const EmailCode = () => {
         </Text>
         <Text style={styles.lable}>Type Code</Text>
         <View style={styles.inputParent}>
-          {/* <OTPTextView
+          {/* <OTPInputView
             inputCount={4}
             offTintColor={COLOR.baseGrey}
             tintColor={COLOR.purple}

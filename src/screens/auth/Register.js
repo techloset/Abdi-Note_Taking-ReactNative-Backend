@@ -18,9 +18,10 @@ import {
   pixelSizeHorizontal,
   pixelSizeVertical,
   widthPixel,
-} from '../../constants/responsive';
+} from '../../styles/consts/ratio';
 import {COLOR, TEXT} from '../../styles/consts/GlobalStyles';
 import AuthInput from '../../components/AuthInput';
+import SCREENS from '../../constants/SCREENS';
 
 const Register = () => {
   const navigation = useNavigation();
@@ -69,7 +70,7 @@ const Register = () => {
         setloading(false);
         // Handle successful registration
         // ...
-        navigation.navigate('Login');
+        navigation.navigate(SCREENS.LOGIN);
       } else {
         setloading(false);
         // Handle registration error

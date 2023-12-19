@@ -20,20 +20,58 @@ import Modal from 'react-native-modal';
 import React, {useState, useContext, useEffect} from 'react';
 import IconA from 'react-native-vector-icons/AntDesign';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {useAuth} from '../auth/AuthContext';
-// import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {ContextAuth} from '../auth/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useRoute} from '@react-navigation/native';
 import {
   fontPixel,
   heightPixel,
   pixelSizeHorizontal,
   pixelSizeVertical,
   widthPixel,
-} from '../constants/responsive';
+} from '../styles/consts/ratio';
+import SCREENS from '../constants/SCREENS';
+import {useAuth} from '../context/AuthContext';
 
-const Settings = () => {
+const Settings = ({navigation}) => {
+  const {authData, setAuthData} = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [isModalVisibleLogout, setModalVisibleLogout] = useState(false);
+
+  const [isEnabled, setIsEnabled] = useState(false);
+  const [isEnabled2, setIsEnabled2] = useState(false);
+
+  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const toggleSwitch2 = () => setIsEnabled2(previousState => !previousState);
+
+  const userData = authData.user;
+
+  const signOut = async () => {
+    try {
+      setAuthData('');
+      AsyncStorage.removeItem('auth');
+      console.log('Logout');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const editProfile = () => {
+    navigation.navigate(SCREENS.EDIT_PROFILE);
+  };
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  const toggleLogout = () => {
+    setModalVisibleLogout(!isModalVisibleLogout);
+  };
+
+  const GoChangePassword = () => {
+    navigation.navigate(SCREENS.FORGOT_PASSWORD);
+  };
 
   return (
     <>
@@ -57,30 +95,14 @@ const Settings = () => {
 
             <View style={styles.ProfileInfo}>
               <View>
-                {/* {userInfog ? (
-                  <Image
-                    source={{uri: userInfog.photo}}
-                    style={{width: 65, height: 65, borderRadius: 100}}
-                  />
-                ) : (
-                  <Image
-                    source={
-                      profileImage
-                        ? {uri: profileImage}
-                        : require('../assets/images/user.png')
-                    }
-                    style={{width: 65, height: 65, borderRadius: 100}}
-                  />
-                )} */}
+                <Image
+                  source={require('../assets/images/user.png')}
+                  style={{width: 65, height: 65, borderRadius: 100}}
+                />
               </View>
 
               <View style={{marginTop: 10}}>
-                {/* {userInfog ? (
-                  // <Text style={styles.name}> {userInfog.name}</Text>
-                  ''
-                ) : (
-                  <Text style={styles.name}> {userData.name}</Text>
-                )} */}
+                <Text style={styles.name}> {userData.name}</Text>
                 <View style={{display: 'flex', flexDirection: 'row', gap: 6}}>
                   <Icon
                     name="mail"
@@ -89,18 +111,13 @@ const Settings = () => {
                     style={{marginTop: 3}}
                   />
                   <Text style={{fontSize: 12, color: '#827D89'}}>
-                    {/* {userInfog ? (
-                      // <Text> {userInfog.email}</Text>
-                      ''
-                    ) : (
-                      <Text> {userData.email}</Text>
-                    )} */}
+                    <Text> {userData.email}</Text>
                   </Text>
                 </View>
               </View>
             </View>
             <View style={{marginHorizontal: 16, marginTop: 20}}>
-              <TouchableOpacity style={styles.editBtn}>
+              <TouchableOpacity style={styles.editBtn} onPress={editProfile}>
                 <View style={{display: 'flex', flexDirection: 'row'}}>
                   <Icon
                     name="edit"
@@ -116,7 +133,7 @@ const Settings = () => {
             <View style={styles.appSetting}>
               <Text style={styles.setting}>APP SETTINGS</Text>
             </View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={GoChangePassword}>
               <View style={styles.parentlist}>
                 <View style={{display: 'flex', flexDirection: 'row'}}>
                   <IconF
@@ -155,7 +172,7 @@ const Settings = () => {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={toggleModal}>
               <View style={styles.parentlist}>
                 <View style={{display: 'flex', flexDirection: 'row'}}>
                   <Icon
@@ -176,7 +193,7 @@ const Settings = () => {
 
             <View style={[styles.line, styles.line2]}></View>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={toggleLogout}>
               <View
                 style={{
                   display: 'flex',
@@ -202,7 +219,7 @@ const Settings = () => {
       )}
 
       <View>
-        <Modal style={styles.model}>
+        <Modal style={styles.model} isVisible={isModalVisible}>
           <View style={{display: 'flex', alignItems: 'flex-end'}}>
             <View
               style={{
@@ -210,7 +227,12 @@ const Settings = () => {
                 padding: 6,
                 borderRadius: 100,
               }}>
-              <IconA name="close" size={14} color={'black'} />
+              <IconA
+                name="close"
+                size={14}
+                color={'black'}
+                onPress={toggleModal}
+              />
             </View>
           </View>
           <View style={[styles.parentlist, styles.modelNotify]}>
@@ -223,7 +245,10 @@ const Settings = () => {
               <View style={{display: 'flex', flexDirection: 'row'}}>
                 <Switch
                   trackColor={{false: '#EFE9F7', true: '#EFE9F7'}}
+                  thumbColor={isEnabled ? '#6A3EA1' : '#EFE9F7'}
                   ios_backgroundColor="#3e3e3e"
+                  onValueChange={toggleSwitch}
+                  value={isEnabled}
                 />
               </View>
             </View>
@@ -240,7 +265,10 @@ const Settings = () => {
                 <View style={styles.container}>
                   <Switch
                     trackColor={{false: '#EFE9F7', true: '#EFE9F7'}}
+                    thumbColor={isEnabled2 ? '#6A3EA1' : '#EFE9F7'}
                     ios_backgroundColor="#3e3e3e"
+                    onValueChange={toggleSwitch2}
+                    value={isEnabled2}
                   />
                 </View>
               </View>
@@ -250,7 +278,7 @@ const Settings = () => {
       </View>
 
       <View>
-        <Modal style={styles.model2}>
+        <Modal style={styles.model2} isVisible={isModalVisibleLogout}>
           <View style={styles.modelDiv}>
             <View>
               <Text style={styles.logouttext}>Log Out</Text>
@@ -260,10 +288,14 @@ const Settings = () => {
                 </Text>
               </View>
               <View style={styles.btnsParent}>
-                <TouchableOpacity style={styles.cencelbtn}>
+                <TouchableOpacity
+                  onPress={toggleLogout}
+                  style={styles.cencelbtn}>
                   <Text style={styles.cencelbtntext}>Cancel</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.cencelbtn, styles.yesBtn]}>
+                <TouchableOpacity
+                  onPress={signOut}
+                  style={[styles.cencelbtn, styles.yesBtn]}>
                   <Text style={[styles.cencelbtntext, styles.yesText]}>
                     Yes
                   </Text>
@@ -298,7 +330,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: pixelSizeHorizontal(13),
     lineHeight: 22.4,
-    width: '35%',
   },
   ProfileInfo: {
     marginLeft: pixelSizeVertical(16),

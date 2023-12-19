@@ -8,6 +8,7 @@ import {useNavigation} from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import Model from '../assets/images/model.svg';
 import {COLOR} from '../styles/consts/GlobalStyles';
+import SCREENS from '../constants/SCREENS';
 
 const openAlarmApp = () => {
   const alarmAppUrl =
@@ -28,7 +29,7 @@ const BottomMenuBar = () => {
   const [isModalVisible2, setModalVisible2] = useState(false);
   const navigation = useNavigation();
   const searchBar = () => {
-    navigation.navigate('SearchBar');
+    navigation.navigate(SCREENS.SEARCH);
   };
 
   const toggleModal = () => {

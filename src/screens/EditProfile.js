@@ -8,159 +8,23 @@ import {
   TextInput,
   ActivityIndicator, // Import ActivityIndicator
 } from 'react-native';
-import {DeviceEventEmitter} from 'react-native';
 import {ScrollView} from 'react-native';
 import HeaderBack from '../components/HeaderBack';
 import {Image} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {launchImageLibrary} from 'react-native-image-picker';
-import {PermissionsAndroid} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
 import {
   fontPixel,
   heightPixel,
   pixelSizeHorizontal,
   pixelSizeVertical,
   widthPixel,
-} from '../constants/responsive';
+} from '../styles/consts/ratio';
+import {useAuth} from '../context/AuthContext';
 
 const EditProfile = () => {
-  const [userData, setUserData] = useState(null);
-  const [updatedname, setname] = useState('');
-  const [updatedemail, setEmail] = useState('');
-  const [profileImage, setProfileImage] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [userInfog, setuserInfog] = useState();
+  const {authData, setAuthData} = useAuth();
+  const userData = authData.user;
 
-  useEffect(() => {
-    async function checkLoginStatus() {
-      try {
-        const storedData = await AsyncStorage.getItem('UserData');
-        let googleData = await AsyncStorage.getItem('GoogleUserData');
-        const userData = JSON.parse(storedData);
-        const Datagoogle = JSON.parse(googleData);
-        setuserInfog(Datagoogle);
-        setUserData(userData);
-
-        if (userData && userData.name) {
-          setname(userData.name);
-        } else if (Datagoogle && Datagoogle.name) {
-          setname(Datagoogle.name);
-        }
-
-        if (userData && userData.email) {
-          setEmail(userData.email);
-        } else if (Datagoogle && Datagoogle.email) {
-          setname(Datagoogle.email);
-        }
-      } catch (error) {
-        console.error('Error checking login status: ', error);
-      }
-    }
-
-    checkLoginStatus();
-  }, []);
-
-  const navigation = useNavigation();
-  const handleSaveChanges = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(
-        'https://notesapp-backend-omega.vercel.app/api/user/editProfile',
-
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: updatedname,
-            email: updatedemail,
-            oldemail: userData.email,
-          }),
-        },
-      );
-      if (response.ok) {
-        setLoading(false);
-        const updatedUserData = {
-          ...userData,
-          name: updatedname,
-          email: updatedemail,
-        };
-        await AsyncStorage.setItem('UserData', JSON.stringify(updatedUserData));
-
-        setUserData(updatedUserData);
-        navigation.navigate('Login');
-      }
-    } catch (error) {
-      setLoading(false);
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const requestGalleryPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        {
-          title: 'Gallery Permission',
-          message: 'App needs access to your gallery to select an image.',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        pickImage();
-      } else {
-        console.log('Gallery permission denied');
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  };
-
-  const pickImage = () => {
-    setLoading(true);
-    const options = {
-      mediaType: 'photo',
-      includeBase64: false,
-    };
-    launchImageLibrary(options, async response => {
-      setLoading(false);
-      console.log(response);
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else {
-        const uri = response.assets[0].uri;
-        console.log('Selected Image URI: ', uri);
-        await AsyncStorage.setItem('Profile', uri);
-        setProfileImage(uri);
-        DeviceEventEmitter.emit('profileImageChanged', uri);
-      }
-    });
-  };
-
-  useEffect(() => {
-    const getProfile = async () => {
-      try {
-        const uri = await AsyncStorage.getItem('Profile');
-        setProfileImage(uri);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    getProfile();
-  }, []);
-
-  const defaultProfileImage = require('../assets/images/user.png');
-  const googleLoggedInWithPicture = userInfog && userInfog.photo;
   return (
     <View style={styles.main}>
       <ScrollView>
@@ -177,15 +41,9 @@ const EditProfile = () => {
         <Text>EditProfile</Text>
 
         <View style={styles.Profilepic}>
-          <View key={profileImage || 'defaultImage'}>
+          <View>
             <Image
-              source={
-                googleLoggedInWithPicture
-                  ? {uri: userInfog.photo}
-                  : profileImage
-                  ? {uri: profileImage}
-                  : defaultProfileImage
-              }
+              source={require('../assets/images/user.png')}
               style={{width: 120, height: 120, borderRadius: 100}}
             />
           </View>
@@ -198,9 +56,7 @@ const EditProfile = () => {
             display: 'flex',
             alignItems: 'center',
           }}>
-          <TouchableOpacity
-            style={styles.editBtn}
-            onPress={requestGalleryPermission}>
+          <TouchableOpacity style={styles.editBtn}>
             <View style={{display: 'flex', flexDirection: 'row'}}>
               <Icon
                 name="edit"
@@ -222,8 +78,7 @@ const EditProfile = () => {
               style={styles.input}
               placeholderTextColor={'#180E25'}
               placeholder="Michael Antonio"
-              value={userInfog ? userInfog.name : updatedname}
-              onChangeText={setname}
+              value={userData.name}
             />
           </View>
           <View style={{marginTop: 20}}>
@@ -232,8 +87,7 @@ const EditProfile = () => {
               style={styles.input}
               placeholderTextColor={'#180E25'}
               placeholder="anto_michael@gmail.com"
-              value={userInfog ? userInfog.email : updatedemail}
-              onChangeText={setEmail}
+              value={userData.email}
             />
             <Text style={styles.passwordValidation}>
               Changing email address information means you need to re-login to
@@ -241,10 +95,8 @@ const EditProfile = () => {
             </Text>
           </View>
           <View style={{marginTop: 30}}>
-            <TouchableOpacity style={styles.btn} onPress={handleSaveChanges}>
-              <Text style={styles.text}>
-                {loading ? 'Loading...' : 'Save Changes'}
-              </Text>
+            <TouchableOpacity style={styles.btn}>
+              <Text style={styles.text}>Save Changes</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -1,9 +1,7 @@
 import {StyleSheet, TextInput} from 'react-native';
 import React from 'react';
 import {COLOR} from '../styles/consts/GlobalStyles';
-import ratio from '../styles/consts/ratio';
-
-const {widthPixel, pixelSizeHorizontal} = ratio;
+import {widthPixel, pixelSizeHorizontal} from '../styles/consts/ratio';
 
 const AuthInput = ({
   placeholder,

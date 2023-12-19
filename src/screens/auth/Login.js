@@ -23,12 +23,15 @@ import {
   pixelSizeHorizontal,
   pixelSizeVertical,
   widthPixel,
-} from '../../constants/responsive';
+} from '../../styles/consts/ratio';
 import Googleg from '../../assets/images/google.svg';
 import Facebook from '../../assets/images/facebook.svg';
 import AuthInput from '../../components/AuthInput';
 import {TEXT, COLOR} from '../../styles/consts/GlobalStyles';
 import PurpleBtn from '../../components/PurpleBtn';
+import API_ENDPOINT_LOCAL from '../../constants/LOCAL';
+import {useAuth} from '../../context/AuthContext';
+import SCREENS from '../../constants/SCREENS';
 
 const Login = () => {
   const [loading, setloading] = useState(false);
@@ -37,6 +40,9 @@ const Login = () => {
     email: '',
     password: '',
   });
+
+  const {authData, setAuthData} = useAuth();
+
   // const [googleLogin, setGoogleLogin] = useState(null);
   const navigation = useNavigation();
 
@@ -48,55 +54,104 @@ const Login = () => {
   };
 
   const handleLogin = async () => {
-    console.log('formData', formData);
+    const {email, password} = formData;
 
-    navigation.navigate('BottomTabNavigator');
+    setloading(true);
 
-    return;
+    // Validate the email and password
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert('Please enter a valid email address');
+      return;
+    }
+
+    if (password.length < 6) {
+      alert('Password must be at least 6 characters long');
+      return;
+    }
 
     try {
-      setloading(true);
-      const response = await fetch(
-        'https://notesapp-backend-omega.vercel.app/api/user/signin',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-          }),
-          usersData,
+      const res = await fetch(`${API_ENDPOINT_LOCAL}/auth/signin`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
-      const usersData = await response.json();
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
-      if (response.ok == false) {
-        Toast.error(usersData.message);
-      }
+      if (!res.ok) {
+        const errorData = await res.json();
+        alert(`Login failed: ${errorData.message}`);
+        return;
+      } else {
+        const userData = await res.json();
 
-      if (response.ok) {
+        const {user, token} = userData;
+
+        setAuthData({...authData, user: user, token: token});
+        await AsyncStorage.setItem('auth', JSON.stringify(userData));
         setloading(false);
-        const userAuthData = usersData.existingUserByEmail;
-        const token = usersData.token;
-        Toast.success('Login Successfully');
-        navigation.navigate('HomeScreen');
-
-        try {
-          await AsyncStorage.setItem('Token', token);
-          await AsyncStorage.setItem('UserData', JSON.stringify(userAuthData));
-        } catch (error) {
-          console.log(error);
-        }
       }
     } catch (error) {
-      console.log('errorrr', error);
-      setloading(false);
-    } finally {
-      setloading(false);
+      console.error('Error during login:', error);
+      alert('Login failed. Please try again.');
     }
+    setloading(false);
   };
+
+  // const handleLogin = async () => {
+  //   console.log('formData', formData);
+
+  //   navigation.navigate('BottomTabNavigator');
+
+  //   return;
+
+  //   try {
+  //     setloading(true);
+  //     const response = await fetch(
+  //       'https://notesapp-backend-omega.vercel.app/api/user/signin',
+  //       {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({
+  //           email: formData.email,
+  //           password: formData.password,
+  //         }),
+  //         usersData,
+  //       },
+  //     );
+  //     const usersData = await response.json();
+
+  //     if (response.ok == false) {
+  //       Toast.error(usersData.message);
+  //     }
+
+  //     if (response.ok) {
+  //       setloading(false);
+  //       const userAuthData = usersData.existingUserByEmail;
+  //       const token = usersData.token;
+  //       Toast.success('Login Successfully');
+  //       navigation.navigate('HomeScreen');
+
+  //       try {
+  //         await AsyncStorage.setItem('Token', token);
+  //         await AsyncStorage.setItem('UserData', JSON.stringify(userAuthData));
+  //       } catch (error) {
+  //         console.log(error);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.log('errorrr', error);
+  //     setloading(false);
+  //   } finally {
+  //     setloading(false);
+  //   }
+  // };
 
   // const signInGoogle = async () => {
   //   try {
@@ -187,14 +242,14 @@ const Login = () => {
             />
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('ForgotPassword')}>
+            onPress={() => navigation.navigate(SCREENS.FORGOT_PASSWORD)}>
             <Text style={styles.forgot}>Forgot Password</Text>
           </TouchableOpacity>
           <View style={{marginTop: 25}}>
             <PurpleBtn
               onPress={handleLogin}
               disabled={loading}
-              title={loading ? 'Loading...' : 'Login'}
+              title={loading ? 'Logging In...' : 'Login'}
               icon="arrow-right"
             />
           </View>
@@ -211,7 +266,7 @@ const Login = () => {
 
             <Text
               style={styles.registerHere}
-              onPress={() => navigation.navigate('Register')}>
+              onPress={() => navigation.navigate(SCREENS.REGISTER)}>
               Don’t have any account? Register here
             </Text>
           </View>

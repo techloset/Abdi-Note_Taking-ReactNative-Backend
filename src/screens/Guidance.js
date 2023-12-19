@@ -16,7 +16,7 @@ import {
   pixelSizeHorizontal,
   pixelSizeVertical,
   widthPixel,
-} from '../constants/responsive';
+} from '../styles/consts/ratio';
 const Guidence = () => {
   return (
     <View style={styles.main}>

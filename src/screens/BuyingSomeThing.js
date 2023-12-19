@@ -11,6 +11,7 @@ import {
 import HeaderBack from '../components/HeaderBack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '@react-native-community/checkbox';
+import API_ENDPOINT_LOCAL from '../constants/LOCAL';
 import BottomMenuBar from '../navigation/BottomMenuBar';
 import {
   fontPixel,
@@ -18,33 +19,38 @@ import {
   pixelSizeHorizontal,
   pixelSizeVertical,
   widthPixel,
-} from '../constants/responsive';
+} from '../styles/consts/ratio';
+import {useAuth} from '../context/AuthContext';
 
 const BuyingSomeThing = () => {
   const [newCheckboxLabel, setNewCheckboxLabel] = useState('');
-  const [checkboxList, setCheckboxList] = useState([]);
+  const [checkboxList, setCheckboxList] = useState();
   const [showInput, setShowInput] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [checkedItems, setCheckedItems] = useState([]);
+
+  const {authData} = useAuth();
+
+  const user_id = authData.user.id;
 
   useEffect(() => {
     fetchItems();
   }, []);
 
+  // fetch the checkbox
   const fetchItems = async () => {
     try {
       setLoading(true);
       const response = await fetch(
-        'https://notesapp-backend-omega.vercel.app/api/items/getItems',
-       
+        `${API_ENDPOINT_LOCAL}/buying?id=${user_id}`,
+
         {
           method: 'GET',
         },
-       
       );
+
       if (response.ok) {
         const data = await response.json();
-        setCheckboxList(data.items);
+        setCheckboxList(data.buyTasks);
       } else {
         console.error('Error fetching items');
       }
@@ -54,57 +60,89 @@ const BuyingSomeThing = () => {
       setLoading(false);
     }
   };
+  // fetch the checkbox
 
+  // add the checkbox
   const handleAddCheckbox = async () => {
     if (newCheckboxLabel.trim() !== '') {
-      const newItem = {id: Date.now(), label: newCheckboxLabel, checked: false};
+      const title = newCheckboxLabel;
+      const isChecked = false; // Assuming the initial state is unchecked
 
       try {
         setLoading(true);
-        const response = await fetch(
-          'https://notesapp-backend-omega.vercel.app/api/items/buyItemList',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              iid: newItem.id,
-              checked: newItem.checked,
-              label: newItem.label,
-            }),
-          },
-        );
 
-        if (response.ok) {
-          const responseData = await response.json();
-
-          setCheckboxList([...checkboxList, responseData.item]);
-          setNewCheckboxLabel('');
-        } else {
-          console.error('Error adding checkbox item');
-        }
-      } catch (error) {
-        console.error('Error adding checkbox item', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
-
-  const handleDeleteCheckbox = async id => {
-    try {
-      setLoading(true);
-      const response = await fetch(
-        'https://notesapp-backend-omega.vercel.app/api/items/deleteItem',
-        {
-          method: 'DELETE',
+        const response = await fetch(`${API_ENDPOINT_LOCAL}/buying`, {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({id: id}),
+          body: JSON.stringify({
+            title,
+            isChecked,
+            currentUserId: user_id,
+          }),
+        });
+
+        const responseData = await response.json();
+
+        if (response.ok) {
+          // Assuming the API returns the newly added item
+          setCheckboxList(prevList => [...prevList, responseData.newBuyTask]);
+          setNewCheckboxLabel('');
+        } else {
+          console.error(
+            'Error adding checkbox item:',
+            responseData.message || 'Unknown error',
+          );
+        }
+      } catch (error) {
+        console.error('Error adding checkbox item:', error);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      alert('Please enter title');
+    }
+  };
+
+  // add the checkbox
+
+  // Function to update checkbox state
+  const handleUpdateCheckbox = async (id, newValue) => {
+    const updatedList = checkboxList.map(item =>
+      item.id === id ? {...item, isChecked: newValue} : item,
+    );
+    setCheckboxList(updatedList);
+
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_ENDPOINT_LOCAL}/buying`, {
+        method: 'PUT',
+        headers: {
+          'Content-type': 'application/json',
         },
-      );
+        body: JSON.stringify({id, isChecked: newValue}),
+      });
+
+      const responseData = await response.json();
+    } catch (error) {
+      console.error('Error updating checkbox state', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // delete checkbox
+  const handleDeleteCheckbox = async id => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_ENDPOINT_LOCAL}/buying`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({id: id}),
+      });
 
       if (response.ok) {
         setCheckboxList(checkboxList.filter(item => item.id !== id));
@@ -113,41 +151,6 @@ const BuyingSomeThing = () => {
       }
     } catch (error) {
       console.error('Error deleting checkbox item', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCheckboxChange = async (id, checked, label) => {
-    const updatedList = checkboxList.map(item =>
-      item.id === id ? {...item, checked} : item,
-    );
-    setCheckboxList(updatedList);
-    if (checked) {
-      setCheckedItems([...checkedItems, id]);
-    } else {
-      setCheckedItems(checkedItems.filter(item => item !== id));
-    }
-    try {
-      setLoading(true);
-      const response = await fetch(
-        'https://notesapp-backend-omega.vercel.app/api/items/updatelist',
-        {
-          method: 'PUT',
-          headers: {
-            'Content-type': 'application/json',
-          },
-          body: JSON.stringify({iid: id, checked: checked}),
-        },
-      );
-
-      if (response.ok) {
-        console.log(`Checkbox with ID ${id} is now ${checked ? true : false}`);
-      } else {
-        console.error('Error updating checkbox item');
-      }
-    } catch (error) {
-      console.error('Error updating checkbox item', error);
     } finally {
       setLoading(false);
     }
@@ -177,23 +180,28 @@ const BuyingSomeThing = () => {
             />
           ) : (
             <View style={{marginTop: 20}}>
-              {checkboxList.map(item => (
-                <View style={styles.checkBoxParent} key={item.id}>
-                  <CheckBox
-                    style={{marginTop: 6}}
-                    tintColors={{true: '#6A3EA1', false: 'gray'}}
-                    value={item.checked}
-                    onValueChange={newValue => {
-                      handleCheckboxChange(item.id, newValue, item.label);
-                    }}
-                  />
-                  <Text style={styles.text}>&nbsp;{item.label}</Text>
-                  <TouchableOpacity
-                    onPress={() => handleDeleteCheckbox(item.id)}>
-                    <Icon name="delete" size={24} color="red" />
-                  </TouchableOpacity>
-                </View>
-              ))}
+              {checkboxList?.length > 0 ? (
+                checkboxList.map(item => (
+                  <View style={styles.checkBoxParent} key={item.id}>
+                    <CheckBox
+                      style={{marginTop: 6}}
+                      tintColors={{true: '#6A3EA1', false: 'gray'}}
+                      value={item.isChecked}
+                      onValueChange={newValue => {
+                        handleUpdateCheckbox(item.id, newValue);
+                      }}
+                    />
+                    <Text style={styles.text}>&nbsp;{item.title}</Text>
+                    <TouchableOpacity
+                      onPress={() => handleDeleteCheckbox(item.id)}>
+                      <Icon name="delete" size={24} color="red" />
+                    </TouchableOpacity>
+                  </View>
+                ))
+              ) : (
+                <Text style={styles.text}>Nothing Found</Text>
+              )}
+
               {showInput && (
                 <View style={styles.addCheckboxInput}>
                   <TextInput

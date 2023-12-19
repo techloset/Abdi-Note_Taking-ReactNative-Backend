@@ -13,7 +13,7 @@ import {
   pixelSizeHorizontal,
   pixelSizeVertical,
   widthPixel,
-} from '../../constants/responsive';
+} from '../../styles/consts/ratio';
 import {TEXT} from '../../styles/consts/GlobalStyles';
 import AuthInput from '../../components/AuthInput';
 import PurpleBtn from '../../components/PurpleBtn';

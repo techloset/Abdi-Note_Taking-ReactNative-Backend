@@ -8,7 +8,7 @@ import {
   heightPixel,
   pixelSizeHorizontal,
   widthPixel,
-} from '../constants/responsive';
+} from '../styles/consts/ratio';
 
 const LoadingScreen = () => {
   return (

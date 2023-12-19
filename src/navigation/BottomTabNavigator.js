@@ -1,5 +1,4 @@
 import React from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Icons from 'react-native-vector-icons/FontAwesome6';
 import IconsM from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconsE from 'react-native-vector-icons/Entypo';
@@ -11,7 +10,7 @@ import FinishedScreen from '../screens/FinishedScreen';
 import CreateNewNotes from '../screens/CreateNewNotes';
 import Settings from '../screens/Settings';
 import {StyleSheet, View} from 'react-native';
-import SearchBar from '../screens/SearchBar';
+import SearchBar from '../screens/SearchScreen';
 
 const Tab = createBottomTabNavigator();
 

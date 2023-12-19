@@ -14,7 +14,7 @@ import {
   fontPixel,
   pixelSizeHorizontal,
   widthPixel,
-} from '../../constants/responsive';
+} from '../../styles/consts/ratio';
 import AuthInput from '../../components/AuthInput';
 import {TEXT} from '../../styles/consts/GlobalStyles';
 
