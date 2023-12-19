@@ -8,7 +8,7 @@ import {
   TextInput,
 } from 'react-native';
 import React from 'react';
-import HeaderBack from '../components/HeaderBack';
+import HeaderBack from '../../components/HeaderBack';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import {
   fontPixel,
@@ -16,7 +16,7 @@ import {
   pixelSizeHorizontal,
   pixelSizeVertical,
   widthPixel,
-} from '../constants/responsive';
+} from '../../styles/consts/ratio';
 
 const ChangePassword = () => {
   return (

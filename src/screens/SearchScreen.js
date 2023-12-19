@@ -17,7 +17,7 @@ import {
   pixelSizeHorizontal,
   pixelSizeVertical,
   widthPixel,
-} from '../constants/responsive';
+} from '../styles/consts/ratio';
 
 const SearchBar = () => {
   const navigation = useNavigation();
