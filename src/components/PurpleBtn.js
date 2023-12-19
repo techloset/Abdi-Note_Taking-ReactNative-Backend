@@ -5,7 +5,7 @@ import {
   fontPixel,
   pixelSizeHorizontal,
   widthPixel,
-} from '../constants/responsive';
+} from '../styles/consts/ratio';
 import {COLOR} from '../styles/consts/GlobalStyles';
 
 const PurpleBtn = ({title, icon, iconColor, onPress, disabled}) => {

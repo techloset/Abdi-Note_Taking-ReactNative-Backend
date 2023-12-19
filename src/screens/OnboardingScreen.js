@@ -10,14 +10,14 @@ import {
   heightPixel,
   pixelSizeHorizontal,
   widthPixel,
-} from '../constants/responsive';
+} from '../styles/consts/ratio';
+import SCREENS from '../constants/SCREENS';
 
 const OnboardingScreen = () => {
   const navigation = useNavigation();
 
   const GoLogin = () => {
-    navigation.navigate('Login');
-    console.log('first');
+    navigation.navigate(SCREENS.LOGIN);
   };
 
   return (

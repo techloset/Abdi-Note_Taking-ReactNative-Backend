@@ -9,7 +9,7 @@ import React from 'react';
 import HeaderBack from '../components/HeaderBack';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import IconA from 'react-native-vector-icons/AntDesign';
-import NotesCard from '../constants/NotesCard';
+// import NotesCard from '../constants/NotesCard';
 import BottomMenuBar from '../navigation/BottomMenuBar';
 import {useNavigation} from '@react-navigation/native';
 import {
@@ -18,11 +18,12 @@ import {
   pixelSizeHorizontal,
   pixelSizeVertical,
   widthPixel,
-} from '../constants/responsive';
+} from '../styles/consts/ratio';
+import SCREENS from '../constants/SCREENS';
 const RoutineTasks = () => {
   const navigation = useNavigation();
   const handlesubtask = () => {
-    navigation.navigate('Goals');
+    navigation.navigate(SCREENS.GOALS);
   };
 
   return (
@@ -44,7 +45,7 @@ const RoutineTasks = () => {
         <View style={{paddingHorizontal: 20, marginTop: 20}}>
           <Text style={styles.activeSubNotes}>ACTIVE SUB NOTES</Text>
         </View>
-        {NotesCard.map((item, i) => {
+        {/* {NotesCard.map((item, i) => {
           return (
             <View
               key={i}
@@ -70,7 +71,7 @@ const RoutineTasks = () => {
               <Icons name={item.iconClose} size={20} color={'#C8C5CB'} />
             </View>
           );
-        })}
+        })} */}
 
         <View
           style={{

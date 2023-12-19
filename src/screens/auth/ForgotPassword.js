@@ -1,59 +1,18 @@
 import React, {useState} from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, Text, View, ScrollView} from 'react-native';
 import HeaderBack from '../../components/HeaderBack';
-import {useNavigation} from '@react-navigation/native';
 import {
   fontPixel,
   pixelSizeHorizontal,
   pixelSizeVertical,
   widthPixel,
-} from '../../constants/responsive';
+} from '../../styles/consts/ratio';
 import {TEXT} from '../../styles/consts/GlobalStyles';
 import AuthInput from '../../components/AuthInput';
 import PurpleBtn from '../../components/PurpleBtn';
 
 const ForgotPassword = () => {
-  const [email, setEmail] = useState({email: ''});
-  const [loading, setLoading] = useState(false);
-
-  // Commented out API request code, replace with your implementation
-  // const code = uuid.v4().slice(0, 4);
-  // const navigation = useNavigation()
-  // const emailCode = async () => {
-  //   setLoading(true)
-  //   try {
-  //     // Validation logic here (you may implement your own validation logic)
-  //     // ...
-
-  //     // Replace the following with your API request logic
-  //     // const response = await fetch('Your API Endpoint', {
-  //     //   method: 'POST',
-  //     //   headers: {
-  //     //     'Content-Type': 'application/json',
-  //     //   },
-  //     //   body: JSON.stringify({ email: email.email, code: code }),
-  //     // });
-
-  //     // if (response.ok) {
-  //     //   setLoading(false);
-  //     //   navigation.navigate('EmailCode');
-  //     // }
-  //   } catch (error) {
-  //     setLoading(false);
-  //     const errorMessages = {};
-  //     // Handle errors
-  //     // ...
-  //     setFieldErrors(errorMessages);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const [email, setEmail] = useState();
 
   return (
     <ScrollView style={styles.main}>
@@ -68,16 +27,14 @@ const ForgotPassword = () => {
           <Text style={TEXT.inputLabel}>Email Address</Text>
           <AuthInput
             placeholder="Example: johndoe@gmail.com"
-            onChangeText={e => setEmail({email: e})}
+            onChangeText={e => setEmail(e)}
             keyboardType="email-address"
           />
         </View>
         <View style={{marginTop: pixelSizeHorizontal(50)}}>
           <PurpleBtn
-            // onPress={emailCode}  // Commented out for now
-            onPress={() => console.log('email', email)}
-            disabled={loading}
-            title={loading ? 'Loading...' : 'Submit'}
+            onPress={() => alert('Please go back to the previous screen')}
+            title="Submit"
           />
         </View>
       </View>
