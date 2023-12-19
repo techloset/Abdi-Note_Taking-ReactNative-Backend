@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   ActivityIndicator, // Import ActivityIndicator
+  PermissionsAndroid, // Import PermissionsAndroid
 } from 'react-native';
 import {ScrollView} from 'react-native';
 import HeaderBack from '../components/HeaderBack';
@@ -20,10 +21,65 @@ import {
   widthPixel,
 } from '../styles/consts/ratio';
 import {useAuth} from '../context/AuthContext';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 const EditProfile = () => {
   const {authData, setAuthData} = useAuth();
   const userData = authData.user;
+  const [image, setImage] = useState();
+  let options = {
+    saveToPhotos: true,
+    MediaType: 'photo',
+    allowEditing: true,
+  };
+
+  const openGallery = async () => {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.CAMERA,
+    );
+    // if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    //   const result = await launchImageLibrary(options);
+    //   setImage(result.assets[0].uri);
+    // }
+
+    if (granted) {
+      const result = await launchImageLibrary();
+      let data = result.assets[0];
+      console.log('data', result);
+      return;
+      if (!data.cancelled) {
+        let newfile = {
+          uri: data.uri,
+          type: `test/${data.uri.split('.')[1]}`,
+          name: `test.${data.uri.split('.')[1]}`,
+        };
+        handleUpload(newfile);
+        setImage(newfile);
+      }
+    } else {
+      alert('you need to give up permission to work');
+    }
+  };
+
+  const handleUpload = image => {
+    const data = new FormData();
+    data.append('file', image);
+    data.append('upload_preset', 'employeeApp');
+    data.append('cloud_name', 'mukeshph66');
+
+    fetch('https://api.cloudinary.com/v1_1/mukeshph66/image/upload', {
+      method: 'post',
+      body: data,
+    })
+      .then(res => res.json())
+      .then(data => {
+        setPicture(data.url);
+        setModal(false);
+      })
+      .catch(err => {
+        Alert.alert('error while uploading');
+      });
+  };
 
   return (
     <View style={styles.main}>
@@ -43,7 +99,11 @@ const EditProfile = () => {
         <View style={styles.Profilepic}>
           <View>
             <Image
-              source={require('../assets/images/user.png')}
+              source={
+                image != null
+                  ? {uri: image}
+                  : require('../assets/images/user.png')
+              }
               style={{width: 120, height: 120, borderRadius: 100}}
             />
           </View>
@@ -56,7 +116,7 @@ const EditProfile = () => {
             display: 'flex',
             alignItems: 'center',
           }}>
-          <TouchableOpacity style={styles.editBtn}>
+          <TouchableOpacity style={styles.editBtn} onPress={openGallery}>
             <View style={{display: 'flex', flexDirection: 'row'}}>
               <Icon
                 name="edit"
