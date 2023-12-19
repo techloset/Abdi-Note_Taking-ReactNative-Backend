@@ -4,7 +4,6 @@ const SCREENS = {
   LOGIN: 'Login',
   REGISTER: 'Register',
   FORGOT_PASSWORD: 'ForgotPassword',
-  EMAIL_CODE: 'EmailCode',
   CREATE_NEW_PASSWORD: 'CreateNewPassword',
   CHANGE_PASSWORD: 'ChangePassword',
   // auth

@@ -116,7 +116,11 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
       );
       setMainGoalList(updatedMainGoalList);
 
-      const response = await fetch(`${API_ENDPOINT_LOCAL}/maingoals`, {
+      // console.log(mainGoalId, newValue);
+
+      // return;
+
+      const response = await fetch(`${API_ENDPOINT_LOCAL}/main-goal`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
