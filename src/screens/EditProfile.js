@@ -21,11 +21,14 @@ import {
   widthPixel,
 } from '../styles/consts/ratio';
 import {useAuth} from '../context/AuthContext';
+
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+
 
 const EditProfile = () => {
   const {authData, setAuthData} = useAuth();
   const userData = authData.user;
+
   const [image, setImage] = useState();
   let options = {
     saveToPhotos: true,
@@ -81,6 +84,7 @@ const EditProfile = () => {
       });
   };
 
+
   return (
     <View style={styles.main}>
       <ScrollView>
@@ -99,11 +103,13 @@ const EditProfile = () => {
         <View style={styles.Profilepic}>
           <View>
             <Image
+
               source={
                 image != null
                   ? {uri: image}
                   : require('../assets/images/user.png')
               }
+
               style={{width: 120, height: 120, borderRadius: 100}}
             />
           </View>
@@ -116,7 +122,9 @@ const EditProfile = () => {
             display: 'flex',
             alignItems: 'center',
           }}>
+
           <TouchableOpacity style={styles.editBtn} onPress={openGallery}>
+
             <View style={{display: 'flex', flexDirection: 'row'}}>
               <Icon
                 name="edit"

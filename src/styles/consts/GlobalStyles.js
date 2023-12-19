@@ -1,3 +1,4 @@
+
 import {fontPixel, pixelSizeVertical} from '../../styles/consts/ratio';
 
 /* fonts */
@@ -47,3 +48,4 @@ export const COMMON_STYLES = {
     flex: 1,
   },
 };
+
