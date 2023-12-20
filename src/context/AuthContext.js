@@ -12,9 +12,10 @@ export const AuthProvider = ({children}) => {
     const checkLoginStatus = async () => {
       try {
         const storedData = await AsyncStorage.getItem('auth');
+        const token = await AsyncStorage.getItem('token');
         if (storedData) {
           const parsedData = JSON.parse(storedData);
-          setAuthData(parsedData);
+          setAuthData({...parsedData, token});
         }
       } catch (error) {
         console.error('Error checking login status: ', error);
@@ -22,9 +23,10 @@ export const AuthProvider = ({children}) => {
     };
 
     checkLoginStatus();
-  }, []); // Empty dependency array ensures useEffect runs only once
+  }, [setAuthData]);
 
-  // Memoize the value passed to the Provider
+  // console.log('authData :>> ', authData);
+
   const contextValue = React.useMemo(
     () => ({authData, setAuthData}),
     [authData, setAuthData],

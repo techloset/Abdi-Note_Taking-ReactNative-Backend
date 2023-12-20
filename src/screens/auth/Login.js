@@ -86,9 +86,10 @@ const Login = () => {
         const userData = await res.json();
 
         const {user, token} = userData;
+        const userWithToken = {...user, token};
 
-        setAuthData({user});
-        await AsyncStorage.setItem('auth', JSON.stringify(user));
+        setAuthData(user);
+        await AsyncStorage.setItem('auth', JSON.stringify(userWithToken));
         await AsyncStorage.setItem('token', JSON.stringify(token));
         setloading(false);
       }
