@@ -16,7 +16,7 @@ const Goals = () => {
   const [mainGoalList, setMainGoalList] = useState([]);
   const [loading, setLoading] = useState(false);
   const {authData} = useAuth();
-  const user_id = authData.user.id;
+  const user_id = authData.id;
 
   useEffect(() => {
     fetchMainGoals();

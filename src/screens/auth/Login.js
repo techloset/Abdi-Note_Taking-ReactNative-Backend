@@ -9,12 +9,6 @@ import {
 } from 'react-native';
 import React, {useEffect, useState, useContext} from 'react';
 import {useNavigation} from '@react-navigation/native';
-// import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
-// import {
-//   GoogleSignin,
-//   statusCodes,
-// } from '@react-native-google-signin/google-signin';
-import {ContextAuth} from './AuthContext';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -43,7 +37,6 @@ const Login = () => {
 
   const {authData, setAuthData} = useAuth();
 
-  // const [googleLogin, setGoogleLogin] = useState(null);
   const navigation = useNavigation();
 
   const handleChangeText = (field, text) => {
@@ -91,8 +84,9 @@ const Login = () => {
 
         const {user, token} = userData;
 
-        setAuthData({...authData, user: user, token: token});
-        await AsyncStorage.setItem('auth', JSON.stringify(userData));
+        setAuthData({user});
+        await AsyncStorage.setItem('auth', JSON.stringify(user));
+        await AsyncStorage.setItem('token', JSON.stringify(token));
         setloading(false);
       }
     } catch (error) {
@@ -101,116 +95,6 @@ const Login = () => {
     }
     setloading(false);
   };
-
-  // const handleLogin = async () => {
-  //   console.log('formData', formData);
-
-  //   navigation.navigate('BottomTabNavigator');
-
-  //   return;
-
-  //   try {
-  //     setloading(true);
-  //     const response = await fetch(
-  //       'https://notesapp-backend-omega.vercel.app/api/user/signin',
-  //       {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify({
-  //           email: formData.email,
-  //           password: formData.password,
-  //         }),
-  //         usersData,
-  //       },
-  //     );
-  //     const usersData = await response.json();
-
-  //     if (response.ok == false) {
-  //       Toast.error(usersData.message);
-  //     }
-
-  //     if (response.ok) {
-  //       setloading(false);
-  //       const userAuthData = usersData.existingUserByEmail;
-  //       const token = usersData.token;
-  //       Toast.success('Login Successfully');
-  //       navigation.navigate('HomeScreen');
-
-  //       try {
-  //         await AsyncStorage.setItem('Token', token);
-  //         await AsyncStorage.setItem('UserData', JSON.stringify(userAuthData));
-  //       } catch (error) {
-  //         console.log(error);
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.log('errorrr', error);
-  //     setloading(false);
-  //   } finally {
-  //     setloading(false);
-  //   }
-  // };
-
-  // const signInGoogle = async () => {
-  //   try {
-  //     await GoogleSignin.hasPlayServices();
-  //     const userInfo = await GoogleSignin.signIn();
-  //     const googlid = await AsyncStorage.setItem('GoogleId', userInfo.user.id);
-  //     const googleUserData = await AsyncStorage.setItem(
-  //       'GoogleUserData',
-  //       JSON.stringify(userInfo.user),
-  //     );
-  //     setGoogleLogin(userInfo);
-  //     navigation.navigate('HomeScreen');
-  //   } catch (error) {
-  //     if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-  //     } else if (error.code === statusCodes.IN_PROGRESS) {
-  //     } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-  //     } else {
-  //     }
-  //   }
-  // };
-
-  // const {AuthData} = useContext(ContextAuth);
-
-  // useEffect(() => {
-  //   if (googleLogin) {
-  //     AuthData(googleLogin);
-  //   }
-  // }, [googleLogin]);
-  // useEffect(() => {
-  //   if (userData) {
-  //     AuthData(userData);
-  //   }
-  // }, [userData]);
-
-  // //Sign in with Facebook
-
-  // async function onFacebookButtonPress() {
-  //   const result = await LoginManager.logInWithPermissions([
-  //     'public_profile',
-  //     'email',
-  //   ]);
-  //   navigation.navigate('Settings');
-
-  //   if (result.isCancelled) {
-  //     throw 'User cancelled the login process';
-  //   }
-
-  //   const data = await AccessToken.getCurrentAccessToken();
-
-  //   if (!data) {
-  //     throw 'Something went wrong obtaining access token';
-  //   }
-
-  //   const facebookCredential = auth.FacebookAuthProvider.credential(
-  //     data.accessToken,
-  //   );
-
-  //   return auth().signInWithCredential(facebookCredential);
-  // }
 
   return (
     <ScrollView style={styles.main}>

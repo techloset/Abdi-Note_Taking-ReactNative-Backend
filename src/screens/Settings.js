@@ -45,7 +45,7 @@ const Settings = ({navigation}) => {
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   const toggleSwitch2 = () => setIsEnabled2(previousState => !previousState);
 
-  const userData = authData.user;
+  const userData = authData;
 
   const signOut = async () => {
     try {
@@ -96,7 +96,11 @@ const Settings = ({navigation}) => {
             <View style={styles.ProfileInfo}>
               <View>
                 <Image
-                  source={require('../assets/images/user.png')}
+                  source={
+                    userData.profilePic != null
+                      ? {uri: userData.profilePic}
+                      : require('../assets/images/user.png')
+                  }
                   style={{width: 65, height: 65, borderRadius: 100}}
                 />
               </View>

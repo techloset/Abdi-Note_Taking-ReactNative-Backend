@@ -28,7 +28,7 @@ const FinishedScreen = () => {
   const [checkboxList, setCheckboxList] = useState();
 
   const {authData} = useAuth();
-  const user_id = authData.user.id;
+  const user_id = authData.id;
 
   useFocusEffect(
     React.useCallback(() => {

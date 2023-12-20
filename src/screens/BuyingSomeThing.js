@@ -30,7 +30,7 @@ const BuyingSomeThing = () => {
 
   const {authData} = useAuth();
 
-  const user_id = authData.user.id;
+  const user_id = authData.id;
 
   useEffect(() => {
     fetchItems();

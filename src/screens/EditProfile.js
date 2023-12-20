@@ -21,64 +21,170 @@ import {
   widthPixel,
 } from '../styles/consts/ratio';
 import {useAuth} from '../context/AuthContext';
+import storage from '@react-native-firebase/storage';
+import API_ENDPOINT_LOCAL from '../constants/LOCAL';
 
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const EditProfile = () => {
   const {authData, setAuthData} = useAuth();
-  const userData = authData.user;
 
-  const [image, setImage] = useState();
-  let options = {
-    saveToPhotos: true,
-    MediaType: 'photo',
-    allowEditing: true,
-  };
+  const [updatedname, setname] = useState(authData.name);
+  const [updatedemail, setEmail] = useState(authData.email);
+  const [image, setImage] = useState(authData.profilePic);
+  const [loading, setLoading] = useState();
+  const [loadingImg, setLoadingImg] = useState();
 
-  const openGallery = async () => {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.CAMERA,
-    );
-    if (granted) {
-      try {
-        const result = await launchImageLibrary();
-        let data = result.assets[0];
-        let newfile = {
-          uri: data.uri,
-          type: `test/${data.uri.split('.')[1]}`,
-          name: `test.${data.uri.split('.')[1]}`,
-        };
-        handleUpload(newfile);
-        console.log(newfile);
-        // setImage(newfile);
-        // console.log('data', data);
-      } catch (error) {
-        alert('Please select a file to upload');
-        return;
-      }
-    } else {
-      alert('you need to give up permission to work');
+  // console.log('image :>> ', authData);
+
+  const signOut = async () => {
+    try {
+      setAuthData('');
+      AsyncStorage.removeItem('auth');
+      console.log('Logout');
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  const handleUpload = image => {
-    const data = new FormData();
-    data.append('file', image);
-    data.append('upload_preset', 'nativeNotesApp');
-    data.append('cloud_name', 'dtqdflngh');
+  const openGallery = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+      );
 
-    fetch('https://api.cloudinary.com/v1_1/dtqdflngh/image/upload', {
-      method: 'post',
-      body: data,
-    })
-      .then(res => res.json())
-      .then(data => {
-        setImage(data.url);
-      })
-      .catch(err => {
-        alert('error while uploading');
-        console.log('err', err);
-      });
+      if (granted) {
+        const result = await launchImageLibrary();
+        if (!result.didCancel && !result.error) {
+          let data = result.assets[0];
+          let newfile = {
+            uri: data.uri,
+            type: `test/${data.uri.split('.')[1]}`,
+            name: `test.${data.uri.split('.')[1]}`,
+          };
+
+          handleUploadImage(newfile);
+        } else {
+          alert('Please select a file to upload');
+        }
+      } else {
+        alert('You need to give camera permission to work');
+      }
+    } catch (error) {
+      console.error('Error opening gallery:', error);
+    }
+  };
+
+  const handleUploadImage = async image => {
+    try {
+      setLoadingImg(true); // Set loading to true when starting the upload
+
+      if (!image || !image.uri) {
+        throw new Error('Invalid image data');
+      }
+
+      const reference = storage().ref(image.name);
+
+      if (!reference) {
+        throw new Error('Failed to create storage reference');
+      }
+
+      const pathToFile = image.uri;
+
+      if (!pathToFile) {
+        throw new Error('Invalid file path');
+      }
+
+      // uploads file
+      await reference.putFile(pathToFile);
+
+      const url = await storage().ref(image.name).getDownloadURL();
+
+      if (!url) {
+        throw new Error('Failed to get download URL');
+      }
+
+      handleChangePic(url);
+      return url;
+    } catch (error) {
+      console.error('Error uploading image:', error.message);
+      throw error;
+    }
+  };
+
+  const handleChangePic = async url => {
+    try {
+      const response = await fetch(
+        `${API_ENDPOINT_LOCAL}/auth/update-user`,
+
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: authData.email,
+            profilePic: url,
+          }),
+        },
+      );
+      if (response.ok) {
+        const profilePic = await response.json().profilePic;
+        setImage(profilePic);
+        setAuthData(prevUserData => ({
+          ...prevUserData,
+          profilePic: profilePic,
+        }));
+        console.log('====================================');
+        console.log(profilePic);
+        console.log('====================================');
+        setLoadingImg(false);
+      }
+    } catch (error) {
+      setLoadingImg(false);
+
+      console.log(error);
+    } finally {
+      setLoadingImg(false);
+    }
+  };
+
+  const handleChangeCredentials = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${API_ENDPOINT_LOCAL}/auth/update-user`,
+
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: updatedname,
+            email: updatedemail,
+            oldemail: authData.email,
+          }),
+        },
+      );
+      if (response.ok) {
+        setLoading(false);
+        const updatedUserData = {
+          ...authData,
+          name: updatedname,
+          email: updatedemail,
+        };
+        setAuthData(updatedUserData);
+        signOut();
+        // navigation.navigate('Login');
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -94,7 +200,6 @@ const EditProfile = () => {
           <Text style={styles.newNotes}>Edit Profile</Text>
         </View>
         <View style={styles.line}></View>
-        <Text>EditProfile</Text>
 
         <View style={styles.Profilepic}>
           <View>
@@ -124,7 +229,11 @@ const EditProfile = () => {
                 color={'#6A3EA1'}
                 style={{marginEnd: 5, marginTop: 3}}
               />
-              <Text style={styles.textbtn}>Edit Profile</Text>
+              {loadingImg ? (
+                <ActivityIndicator />
+              ) : (
+                <Text style={styles.textbtn}>Edit Profile</Text>
+              )}
             </View>
           </TouchableOpacity>
         </View>
@@ -138,7 +247,8 @@ const EditProfile = () => {
               style={styles.input}
               placeholderTextColor={'#180E25'}
               placeholder="Michael Antonio"
-              value={userData.name}
+              value={updatedname}
+              onChangeText={setname}
             />
           </View>
           <View style={{marginTop: 20}}>
@@ -147,7 +257,8 @@ const EditProfile = () => {
               style={styles.input}
               placeholderTextColor={'#180E25'}
               placeholder="anto_michael@gmail.com"
-              value={userData.email}
+              value={updatedemail}
+              onChangeText={setEmail}
             />
             <Text style={styles.passwordValidation}>
               Changing email address information means you need to re-login to
@@ -155,8 +266,14 @@ const EditProfile = () => {
             </Text>
           </View>
           <View style={{marginTop: 30}}>
-            <TouchableOpacity style={styles.btn}>
-              <Text style={styles.text}>Save Changes</Text>
+            <TouchableOpacity
+              style={styles.btn}
+              onPress={handleChangeCredentials}>
+              {loading ? (
+                <ActivityIndicator />
+              ) : (
+                <Text style={styles.text}>Save Changes</Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>
