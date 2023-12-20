@@ -20,7 +20,7 @@ import {
 } from '../styles/consts/ratio';
 import {launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
-import {API_ENDPOINT} from '@env';
+
 import {useAuth} from '../context/AuthContext';
 
 const Guidance = () => {
@@ -105,27 +105,33 @@ const Guidance = () => {
     try {
       let response;
       if (image?.id) {
-        response = await fetch(`${API_ENDPOINT}/guidance`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
+        response = await fetch(
+          `https://abdi-note-app-backend-prisma.vercel.app/api/guidance`,
+          {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              id: image.id,
+              bannerImage: url,
+            }),
           },
-          body: JSON.stringify({
-            id: image.id,
-            bannerImage: url,
-          }),
-        });
+        );
       } else {
-        response = await fetch(`${API_ENDPOINT}/guidance`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+        response = await fetch(
+          `https://abdi-note-app-backend-prisma.vercel.app/api/guidance`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              currentUserId: authData.id,
+              bannerImage: url,
+            }),
           },
-          body: JSON.stringify({
-            currentUserId: authData.id,
-            bannerImage: url,
-          }),
-        });
+        );
       }
 
       if (response.ok) {
@@ -146,7 +152,7 @@ const Guidance = () => {
   const fetchImage = async () => {
     try {
       const response = await fetch(
-        `${API_ENDPOINT}/guidance?id=${authData.id}`,
+        `https://abdi-note-app-backend-prisma.vercel.app/api/guidance?id=${authData.id}`,
         {
           method: 'GET',
         },

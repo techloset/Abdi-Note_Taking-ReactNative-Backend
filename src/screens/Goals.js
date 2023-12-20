@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import HeaderBack from '../components/HeaderBack';
 import BottomMenuBar from '../navigation/BottomMenuBar';
-import {API_ENDPOINT} from '@env';
+
 import {useAuth} from '../context/AuthContext';
 import GoalsCRUD from '../components/GoalsCRUD';
 
@@ -25,16 +25,19 @@ const Goals = () => {
   const fetchMainGoals = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_ENDPOINT}/main-goal?id=${user_id}`, {
-        method: 'GET',
-      });
+      const response = await fetch(
+        `https://abdi-note-app-backend-prisma.vercel.app/api/main-goal?id=${user_id}`,
+        {
+          method: 'GET',
+        },
+      );
       if (response.ok) {
         const array = await response.json();
         const data = array.mainGoals;
         const mainGoalsWithSubgoals = await Promise.all(
           data.map(async mainGoal => {
             const subgoalResponse = await fetch(
-              `${API_ENDPOINT}/main-goal/sub-goal?id=${mainGoal.id}`,
+              `https://abdi-note-app-backend-prisma.vercel.app/api/main-goal/sub-goal?id=${mainGoal.id}`,
             );
             if (subgoalResponse.ok) {
               const array = await subgoalResponse.json();

@@ -22,7 +22,6 @@ import {
 } from '../styles/consts/ratio';
 import {useAuth} from '../context/AuthContext';
 import storage from '@react-native-firebase/storage';
-import {API_ENDPOINT} from '@env';
 
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -120,7 +119,7 @@ const EditProfile = () => {
   const handleChangePic = async url => {
     try {
       const response = await fetch(
-        `${API_ENDPOINT}/auth/update-user`,
+        `https://abdi-note-app-backend-prisma.vercel.app/api/auth/update-user`,
 
         {
           method: 'PUT',
@@ -155,7 +154,7 @@ const EditProfile = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${API_ENDPOINT}/auth/update-user`,
+        `https://abdi-note-app-backend-prisma.vercel.app/api/auth/update-user`,
 
         {
           method: 'PUT',

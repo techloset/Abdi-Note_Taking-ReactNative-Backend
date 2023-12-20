@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 
 import CheckBox from '@react-native-community/checkbox';
-import {API_ENDPOINT} from '@env';
+
 import {fontPixel, pixelSizeHorizontal} from '../styles/consts/ratio';
 
 const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
@@ -34,17 +34,20 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
 
       try {
         setLoading(true);
-        const response = await fetch(`${API_ENDPOINT}/main-goal`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+        const response = await fetch(
+          `https://abdi-note-app-backend-prisma.vercel.app/api/main-goal`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              title,
+              isChecked,
+              currentUserId: user_id,
+            }),
           },
-          body: JSON.stringify({
-            title,
-            isChecked,
-            currentUserId: user_id,
-          }),
-        });
+        );
 
         if (response) {
           const array = await response.json();
@@ -67,17 +70,20 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
     if (inputText) {
       try {
         setLoading(true);
-        const response = await fetch(`${API_ENDPOINT}/main-goal/sub-goal`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+        const response = await fetch(
+          `https://abdi-note-app-backend-prisma.vercel.app/api/main-goal/sub-goal`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              mainGoalId: mainGoalId,
+              title: inputText,
+              isChecked: false,
+            }),
           },
-          body: JSON.stringify({
-            mainGoalId: mainGoalId,
-            title: inputText,
-            isChecked: false,
-          }),
-        });
+        );
 
         if (response) {
           const responseData = await response.json();
@@ -111,16 +117,19 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
         goal.id === mainGoalId ? {...goal, isChecked: newValue} : goal,
       );
       setMainGoalList(updatedMainGoalList);
-      const response = await fetch(`${API_ENDPOINT}/main-goal`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `https://abdi-note-app-backend-prisma.vercel.app/api/main-goal`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: mainGoalId,
+            isChecked: newValue,
+          }),
         },
-        body: JSON.stringify({
-          id: mainGoalId,
-          isChecked: newValue,
-        }),
-      });
+      );
 
       if (!response.ok) {
         console.log('Error updating main goal isChecked status');
@@ -148,16 +157,19 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
 
       setMainGoalList(updatedMainGoalList);
 
-      const response = await fetch(`${API_ENDPOINT}/subgoals`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `https://abdi-note-app-backend-prisma.vercel.app/api/subgoals`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: subgoalId,
+            isChecked: newValue,
+          }),
         },
-        body: JSON.stringify({
-          id: subgoalId,
-          isChecked: newValue,
-        }),
-      });
+      );
 
       if (!response.ok) {
         console.log('Error updating subgoal isChecked status');

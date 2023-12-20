@@ -22,12 +22,16 @@ export const AuthProvider = ({children}) => {
     };
 
     checkLoginStatus();
-  }, []);
+  }, []); // Empty dependency array ensures useEffect runs only once
+
+  // Memoize the value passed to the Provider
+  const contextValue = React.useMemo(
+    () => ({authData, setAuthData}),
+    [authData, setAuthData],
+  );
 
   return (
-    <AuthContext.Provider value={{authData, setAuthData}}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 };
 

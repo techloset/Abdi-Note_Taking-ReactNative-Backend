@@ -66,17 +66,20 @@ const Register = () => {
       }
 
       setloading(true);
-      const response = await fetch(`${API_ENDPOINT}/auth/signup`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `https://abdi-note-app-backend-prisma.vercel.app/api/auth/signup`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+          }),
         },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
+      );
 
       if (response.ok) {
         setloading(false);

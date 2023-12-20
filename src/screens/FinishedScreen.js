@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -10,7 +10,7 @@ import {COMMON_STYLES, TEXT} from '../styles/consts/GlobalStyles';
 import Illustration from '../assets/images/finishedManAI.svg';
 import Arrow from '../assets/images/homeArrow.svg';
 import {useAuth} from '../context/AuthContext';
-import {API_ENDPOINT} from '@env';
+
 import HomeScreenNeeds from '../components/HomeScreenNeeds';
 import HomeScreenGoals from '../components/HomeScreenGoals';
 import {useFocusEffect} from '@react-navigation/native';
@@ -24,9 +24,13 @@ const FinishedScreen = () => {
   const {authData} = useAuth();
   const user_id = authData.id;
 
+  useEffect(() => {
+    // Fetch items when the component mounts
+    fetchItems();
+  }, []);
+
   useFocusEffect(
     React.useCallback(() => {
-      fetchMainGoals();
       fetchItems();
     }, []),
   );
@@ -34,9 +38,12 @@ const FinishedScreen = () => {
   const fetchMainGoals = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_ENDPOINT}/main-goal?id=${user_id}`, {
-        method: 'GET',
-      });
+      const response = await fetch(
+        `https://abdi-note-app-backend-prisma.vercel.app/api/main-goal?id=${user_id}`,
+        {
+          method: 'GET',
+        },
+      );
 
       if (response.ok) {
         const array = await response.json();
@@ -45,7 +52,7 @@ const FinishedScreen = () => {
         const mainGoalsWithSubgoals = await Promise.all(
           data.map(async mainGoal => {
             const subgoalResponse = await fetch(
-              `${API_ENDPOINT}/main-goal/sub-goal?id=${mainGoal.id}`,
+              `https://abdi-note-app-backend-prisma.vercel.app/api/main-goal/sub-goal?id=${mainGoal.id}`,
             );
 
             if (subgoalResponse.ok) {
@@ -79,9 +86,12 @@ const FinishedScreen = () => {
   const fetchItems = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_ENDPOINT}/buying?id=${user_id}`, {
-        method: 'GET',
-      });
+      const response = await fetch(
+        `https://abdi-note-app-backend-prisma.vercel.app/api/buying?id=${user_id}`,
+        {
+          method: 'GET',
+        },
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -97,6 +107,7 @@ const FinishedScreen = () => {
       console.error('Error fetching items', error);
     } finally {
       setLoading(false);
+      fetchMainGoals();
     }
   };
 

@@ -8,7 +8,6 @@ import Guidence from '../screens/Guidance';
 import HomeScreen from '../screens/HomeScreen';
 import InterestingIdea from '../screens/InterestingIdea';
 import LoadingScreen from '../screens/LoadingScreen';
-// import OnboardingScreen from '../screens/OnboardingScreen';
 import RoutineTasks from '../screens/RoutineTasks';
 import SearchScreen from '../screens/SearchScreen';
 import Settings from '../screens/Settings';
@@ -17,7 +16,7 @@ import SCREENS from './SCREENS';
 
 const NAVIGATION = [
   {
-    screenName: SCREENS.ONBOARDING,
+    screenName: SCREENS.BOTTOM_NAVIGATOR,
     component: BottomTabNavigator,
   },
   {

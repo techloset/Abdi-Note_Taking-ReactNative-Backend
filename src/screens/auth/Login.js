@@ -64,16 +64,19 @@ const Login = () => {
     }
 
     try {
-      const res = await fetch(`${API_ENDPOINT}/auth/signin`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const res = await fetch(
+        `https://abdi-note-app-backend-prisma.vercel.app/api/auth/signin`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
         },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+      );
 
       if (!res.ok) {
         const errorData = await res.json();

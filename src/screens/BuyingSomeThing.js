@@ -11,7 +11,7 @@ import {
 import HeaderBack from '../components/HeaderBack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '@react-native-community/checkbox';
-import {API_ENDPOINT} from '@env';
+
 import BottomMenuBar from '../navigation/BottomMenuBar';
 import {
   fontPixel,
@@ -41,7 +41,7 @@ const BuyingSomeThing = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${API_ENDPOINT}/buying?id=${user_id}`,
+        `https://abdi-note-app-backend-prisma.vercel.app/api/buying?id=${user_id}`,
 
         {
           method: 'GET',
@@ -71,17 +71,20 @@ const BuyingSomeThing = () => {
       try {
         setLoading(true);
 
-        const response = await fetch(`${API_ENDPOINT}/buying`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+        const response = await fetch(
+          `https://abdi-note-app-backend-prisma.vercel.app/api/buying`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              title,
+              isChecked,
+              currentUserId: user_id,
+            }),
           },
-          body: JSON.stringify({
-            title,
-            isChecked,
-            currentUserId: user_id,
-          }),
-        });
+        );
 
         const responseData = await response.json();
 
@@ -116,13 +119,16 @@ const BuyingSomeThing = () => {
 
     try {
       setLoading(true);
-      const response = await fetch(`${API_ENDPOINT}/buying`, {
-        method: 'PUT',
-        headers: {
-          'Content-type': 'application/json',
+      const response = await fetch(
+        `https://abdi-note-app-backend-prisma.vercel.app/api/buying`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-type': 'application/json',
+          },
+          body: JSON.stringify({id, isChecked: newValue}),
         },
-        body: JSON.stringify({id, isChecked: newValue}),
-      });
+      );
 
       const responseData = await response.json();
     } catch (error) {
@@ -136,13 +142,16 @@ const BuyingSomeThing = () => {
   const handleDeleteCheckbox = async id => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_ENDPOINT}/buying`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `https://abdi-note-app-backend-prisma.vercel.app/api/buying`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({id: id}),
         },
-        body: JSON.stringify({id: id}),
-      });
+      );
 
       if (response.ok) {
         setCheckboxList(checkboxList.filter(item => item.id !== id));
