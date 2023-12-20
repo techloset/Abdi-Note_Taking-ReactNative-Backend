@@ -48,6 +48,13 @@ const EditProfile = () => {
     }
   };
 
+  let options = {
+    quality: 1,
+    allowsEditing: false,
+    noData: true,
+    storageOptions: {skipBackup: true},
+  };
+
   const openGallery = async () => {
     try {
       const granted = await PermissionsAndroid.request(
@@ -55,7 +62,7 @@ const EditProfile = () => {
       );
 
       if (granted) {
-        const result = await launchImageLibrary();
+        const result = await launchImageLibrary(options);
         if (!result.didCancel && !result.error) {
           let data = result.assets[0];
           let newfile = {
@@ -130,15 +137,13 @@ const EditProfile = () => {
         },
       );
       if (response.ok) {
-        const profilePic = await response.json().profilePic;
-        setImage(profilePic);
+        const profilePic = await response.json();
+        setImage(profilePic.profilePic);
         setAuthData(prevUserData => ({
           ...prevUserData,
-          profilePic: profilePic,
+          profilePic: profilePic.profilePic,
         }));
-        console.log('====================================');
-        console.log(profilePic);
-        console.log('====================================');
+        console.log(profilePic.profilePic);
         setLoadingImg(false);
       }
     } catch (error) {
