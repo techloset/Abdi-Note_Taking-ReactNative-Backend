@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   StatusBar,
   StyleSheet,
@@ -22,7 +22,7 @@ import {
 } from '../styles/consts/ratio';
 import {useAuth} from '../context/AuthContext';
 import storage from '@react-native-firebase/storage';
-import API_ENDPOINT_LOCAL from '../constants/LOCAL';
+import {API_ENDPOINT} from '@env';
 
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -36,20 +36,17 @@ const EditProfile = () => {
   const [loading, setLoading] = useState();
   const [loadingImg, setLoadingImg] = useState();
 
-  // console.log('image :>> ', authData);
-
   const signOut = async () => {
     try {
       setAuthData('');
       AsyncStorage.removeItem('auth');
-      console.log('Logout');
     } catch (error) {
       console.error(error);
     }
   };
 
   let options = {
-    quality: 1,
+    quality: 0.1,
     allowsEditing: false,
     noData: true,
     storageOptions: {skipBackup: true},
@@ -123,7 +120,7 @@ const EditProfile = () => {
   const handleChangePic = async url => {
     try {
       const response = await fetch(
-        `${API_ENDPOINT_LOCAL}/auth/update-user`,
+        `${API_ENDPOINT}/auth/update-user`,
 
         {
           method: 'PUT',
@@ -143,7 +140,6 @@ const EditProfile = () => {
           ...prevUserData,
           profilePic: profilePic.profilePic,
         }));
-        console.log(profilePic.profilePic);
         setLoadingImg(false);
       }
     } catch (error) {
@@ -159,7 +155,7 @@ const EditProfile = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${API_ENDPOINT_LOCAL}/auth/update-user`,
+        `${API_ENDPOINT}/auth/update-user`,
 
         {
           method: 'PUT',
@@ -182,7 +178,6 @@ const EditProfile = () => {
         };
         setAuthData(updatedUserData);
         signOut();
-        // navigation.navigate('Login');
       }
     } catch (error) {
       setLoading(false);
@@ -226,7 +221,10 @@ const EditProfile = () => {
             display: 'flex',
             alignItems: 'center',
           }}>
-          <TouchableOpacity style={styles.editBtn} onPress={openGallery}>
+          <TouchableOpacity
+            style={styles.editBtn}
+            onPress={openGallery}
+            disabled={loadingImg || loading}>
             <View style={{display: 'flex', flexDirection: 'row'}}>
               <Icon
                 name="edit"
@@ -273,7 +271,8 @@ const EditProfile = () => {
           <View style={{marginTop: 30}}>
             <TouchableOpacity
               style={styles.btn}
-              onPress={handleChangeCredentials}>
+              onPress={handleChangeCredentials}
+              disabled={loading || loadingImg}>
               {loading ? (
                 <ActivityIndicator />
               ) : (

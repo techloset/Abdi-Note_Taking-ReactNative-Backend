@@ -1,10 +1,9 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {
   StatusBar,
   StyleSheet,
   Text,
-  TextInput,
   View,
   ScrollView,
   TouchableOpacity,
@@ -19,9 +18,10 @@ import {
   pixelSizeVertical,
   widthPixel,
 } from '../../styles/consts/ratio';
-import {COLOR, TEXT} from '../../styles/consts/GlobalStyles';
+import {TEXT} from '../../styles/consts/GlobalStyles';
 import AuthInput from '../../components/AuthInput';
 import SCREENS from '../../constants/SCREENS';
+import API_ENDPOINT from '../../constants/LOCAL';
 
 const Register = () => {
   const navigation = useNavigation();
@@ -43,45 +43,59 @@ const Register = () => {
   };
 
   const handleRegister = async () => {
-    console.log('formData', formData);
-
-    return;
     try {
-      // Validation logic here (you may implement your own validation logic)
-      // ...
+      // Basic form validation
+      if (
+        !formData.name ||
+        !formData.email ||
+        !formData.password ||
+        !formData.confirmPassword
+      ) {
+        alert('Please fill in all fields.');
+        return;
+      }
+
+      if (!validateEmail(formData.email)) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+
+      if (formData.password !== formData.confirmPassword) {
+        alert('Passwords do not match.');
+        return;
+      }
 
       setloading(true);
-      const response = await fetch(
-        'https://notesapp-backend-omega.vercel.app/api/user/signup',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
-          }),
+      const response = await fetch(`${API_ENDPOINT}/auth/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
 
       if (response.ok) {
         setloading(false);
-        // Handle successful registration
-        // ...
         navigation.navigate(SCREENS.LOGIN);
       } else {
         setloading(false);
-        // Handle registration error
-        // ...
+        alert('An error occurred');
       }
     } catch (error) {
       console.log(error);
       setloading(false);
-      // Handle other errors
-      // ...
+      alert('Please try again');
     }
+  };
+
+  const validateEmail = email => {
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
   return (
@@ -140,7 +154,7 @@ const Register = () => {
             <Text style={TEXT.inputLabel}>Retype Password</Text>
             <AuthInput
               placeholder="********"
-              value={formData.password}
+              value={formData.confirmPassword}
               onChangeText={value => handleChangeText('confirmPassword', value)}
               secureTextEntry={true}
             />

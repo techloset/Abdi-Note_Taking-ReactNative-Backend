@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 
 import CheckBox from '@react-native-community/checkbox';
-import API_ENDPOINT_LOCAL from '../constants/LOCAL';
+import {API_ENDPOINT} from '@env';
 import {fontPixel, pixelSizeHorizontal} from '../styles/consts/ratio';
 
 const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
@@ -34,7 +34,7 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
 
       try {
         setLoading(true);
-        const response = await fetch(`${API_ENDPOINT_LOCAL}/main-goal`, {
+        const response = await fetch(`${API_ENDPOINT}/main-goal`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -67,25 +67,21 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
     if (inputText) {
       try {
         setLoading(true);
-        const response = await fetch(
-          `${API_ENDPOINT_LOCAL}/main-goal/sub-goal`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              mainGoalId: mainGoalId,
-              title: inputText,
-              isChecked: false,
-            }),
+        const response = await fetch(`${API_ENDPOINT}/main-goal/sub-goal`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-        );
+          body: JSON.stringify({
+            mainGoalId: mainGoalId,
+            title: inputText,
+            isChecked: false,
+          }),
+        });
 
         if (response) {
           const responseData = await response.json();
           const newSubgoalItem = responseData.newSubGoal;
-          console.log(newSubgoalItem);
           setMainGoalList(prevMainGoalList =>
             prevMainGoalList.map(goal =>
               goal.id === mainGoalId
@@ -115,12 +111,7 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
         goal.id === mainGoalId ? {...goal, isChecked: newValue} : goal,
       );
       setMainGoalList(updatedMainGoalList);
-
-      // console.log(mainGoalId, newValue);
-
-      // return;
-
-      const response = await fetch(`${API_ENDPOINT_LOCAL}/main-goal`, {
+      const response = await fetch(`${API_ENDPOINT}/main-goal`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -157,7 +148,7 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
 
       setMainGoalList(updatedMainGoalList);
 
-      const response = await fetch(`${API_ENDPOINT_LOCAL}/subgoals`, {
+      const response = await fetch(`${API_ENDPOINT}/subgoals`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

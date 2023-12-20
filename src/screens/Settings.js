@@ -51,7 +51,6 @@ const Settings = ({navigation}) => {
     try {
       setAuthData('');
       AsyncStorage.removeItem('auth');
-      console.log('Logout');
     } catch (error) {
       console.error(error);
     }

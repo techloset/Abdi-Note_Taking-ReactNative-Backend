@@ -24,8 +24,6 @@ export const AuthProvider = ({children}) => {
     checkLoginStatus();
   }, []);
 
-  console.log('authData :>> ', authData);
-
   return (
     <AuthContext.Provider value={{authData, setAuthData}}>
       {children}

@@ -1,26 +1,20 @@
+import React, {useState} from 'react';
 import {
   ActivityIndicator,
   SafeAreaView,
-  StatusBar,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
-import {
-  fontPixel,
-  pixelSizeHorizontal,
-  widthPixel,
-} from '../styles/consts/ratio';
-// svgs
 import {COMMON_STYLES, TEXT} from '../styles/consts/GlobalStyles';
 import Illustration from '../assets/images/finishedManAI.svg';
 import Arrow from '../assets/images/homeArrow.svg';
 import {useAuth} from '../context/AuthContext';
-import API_ENDPOINT_LOCAL from '../constants/LOCAL';
+import {API_ENDPOINT} from '@env';
 import HomeScreenNeeds from '../components/HomeScreenNeeds';
 import HomeScreenGoals from '../components/HomeScreenGoals';
 import {useFocusEffect} from '@react-navigation/native';
+import {pixelSizeHorizontal} from '../styles/consts/ratio';
 
 const FinishedScreen = () => {
   const [mainGoalList, setMainGoalList] = useState([]);
@@ -40,12 +34,9 @@ const FinishedScreen = () => {
   const fetchMainGoals = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `${API_ENDPOINT_LOCAL}/main-goal?id=${user_id}`,
-        {
-          method: 'GET',
-        },
-      );
+      const response = await fetch(`${API_ENDPOINT}/main-goal?id=${user_id}`, {
+        method: 'GET',
+      });
 
       if (response.ok) {
         const array = await response.json();
@@ -54,7 +45,7 @@ const FinishedScreen = () => {
         const mainGoalsWithSubgoals = await Promise.all(
           data.map(async mainGoal => {
             const subgoalResponse = await fetch(
-              `${API_ENDPOINT_LOCAL}/main-goal/sub-goal?id=${mainGoal.id}`,
+              `${API_ENDPOINT}/main-goal/sub-goal?id=${mainGoal.id}`,
             );
 
             if (subgoalResponse.ok) {
@@ -88,12 +79,9 @@ const FinishedScreen = () => {
   const fetchItems = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `${API_ENDPOINT_LOCAL}/buying?id=${user_id}`,
-        {
-          method: 'GET',
-        },
-      );
+      const response = await fetch(`${API_ENDPOINT}/buying?id=${user_id}`, {
+        method: 'GET',
+      });
 
       if (response.ok) {
         const data = await response.json();

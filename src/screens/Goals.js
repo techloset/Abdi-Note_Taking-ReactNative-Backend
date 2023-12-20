@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import HeaderBack from '../components/HeaderBack';
 import BottomMenuBar from '../navigation/BottomMenuBar';
-import API_ENDPOINT_LOCAL from '../constants/LOCAL';
+import {API_ENDPOINT} from '@env';
 import {useAuth} from '../context/AuthContext';
 import GoalsCRUD from '../components/GoalsCRUD';
 
@@ -25,19 +25,16 @@ const Goals = () => {
   const fetchMainGoals = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `${API_ENDPOINT_LOCAL}/main-goal?id=${user_id}`,
-        {
-          method: 'GET',
-        },
-      );
+      const response = await fetch(`${API_ENDPOINT}/main-goal?id=${user_id}`, {
+        method: 'GET',
+      });
       if (response.ok) {
         const array = await response.json();
         const data = array.mainGoals;
         const mainGoalsWithSubgoals = await Promise.all(
           data.map(async mainGoal => {
             const subgoalResponse = await fetch(
-              `${API_ENDPOINT_LOCAL}/main-goal/sub-goal?id=${mainGoal.id}`,
+              `${API_ENDPOINT}/main-goal/sub-goal?id=${mainGoal.id}`,
             );
             if (subgoalResponse.ok) {
               const array = await subgoalResponse.json();

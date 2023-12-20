@@ -11,7 +11,7 @@ import {
 import HeaderBack from '../components/HeaderBack';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CheckBox from '@react-native-community/checkbox';
-import API_ENDPOINT_LOCAL from '../constants/LOCAL';
+import {API_ENDPOINT} from '@env';
 import BottomMenuBar from '../navigation/BottomMenuBar';
 import {
   fontPixel,
@@ -41,7 +41,7 @@ const BuyingSomeThing = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `${API_ENDPOINT_LOCAL}/buying?id=${user_id}`,
+        `${API_ENDPOINT}/buying?id=${user_id}`,
 
         {
           method: 'GET',
@@ -71,7 +71,7 @@ const BuyingSomeThing = () => {
       try {
         setLoading(true);
 
-        const response = await fetch(`${API_ENDPOINT_LOCAL}/buying`, {
+        const response = await fetch(`${API_ENDPOINT}/buying`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -116,7 +116,7 @@ const BuyingSomeThing = () => {
 
     try {
       setLoading(true);
-      const response = await fetch(`${API_ENDPOINT_LOCAL}/buying`, {
+      const response = await fetch(`${API_ENDPOINT}/buying`, {
         method: 'PUT',
         headers: {
           'Content-type': 'application/json',
@@ -136,7 +136,7 @@ const BuyingSomeThing = () => {
   const handleDeleteCheckbox = async id => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_ENDPOINT_LOCAL}/buying`, {
+      const response = await fetch(`${API_ENDPOINT}/buying`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

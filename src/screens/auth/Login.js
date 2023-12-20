@@ -23,7 +23,7 @@ import Facebook from '../../assets/images/facebook.svg';
 import AuthInput from '../../components/AuthInput';
 import {TEXT, COLOR} from '../../styles/consts/GlobalStyles';
 import PurpleBtn from '../../components/PurpleBtn';
-import API_ENDPOINT_LOCAL from '../../constants/LOCAL';
+import API_ENDPOINT from '../../constants/LOCAL';
 import {useAuth} from '../../context/AuthContext';
 import SCREENS from '../../constants/SCREENS';
 
@@ -64,7 +64,7 @@ const Login = () => {
     }
 
     try {
-      const res = await fetch(`${API_ENDPOINT_LOCAL}/auth/signin`, {
+      const res = await fetch(`${API_ENDPOINT}/auth/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
