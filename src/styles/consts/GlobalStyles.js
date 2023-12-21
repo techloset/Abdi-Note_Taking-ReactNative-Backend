@@ -16,6 +16,8 @@ export const COLOR = {
   grey: '#827D89',
   purple: '#6A3EA1',
   transparent: 'rgba(0, 0, 0, 0)',
+  carrot: '#CE3A54',
+  darkRed: '#5A1623',
   warning: '#FDEBAB',
 };
 // TEXT

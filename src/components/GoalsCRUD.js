@@ -9,7 +9,12 @@ import {
 
 import CheckBox from '@react-native-community/checkbox';
 
-import {fontPixel, pixelSizeHorizontal} from '../styles/consts/ratio';
+import {
+  fontPixel,
+  pixelSizeHorizontal,
+  widthPixel,
+} from '../styles/consts/ratio';
+import {COLOR} from '../styles/consts/GlobalStyles';
 
 const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
   const [newMainGoal, setNewMainGoal] = useState('');
@@ -71,7 +76,7 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
       try {
         setLoading(true);
         const response = await fetch(
-          `https://abdi-note-app-backend-prisma.vercel.app/api/main-goal/sub-goal`,
+          `http://192.168.1.104:3000/api/main-goal/sub-goal`,
           {
             method: 'POST',
             headers: {
@@ -85,21 +90,25 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
           },
         );
 
-        if (response) {
+        if (response.ok) {
           const responseData = await response.json();
           const newSubgoalItem = responseData.newSubGoal;
-          setMainGoalList(prevMainGoalList =>
-            prevMainGoalList.map(goal =>
-              goal.id === mainGoalId
-                ? {
-                    ...goal,
-                    subgoals: [...(goal.subgoals || []), newSubgoalItem],
-                  }
-                : goal,
-            ),
+
+          // Update the main goal's isChecked to false
+          const updatedMainGoalList = mainGoalList.map(goal =>
+            goal.id === mainGoalId
+              ? {
+                  ...goal,
+                  isChecked: false,
+                  subgoals: [...(goal.subgoals || []), newSubgoalItem],
+                }
+              : goal,
           );
+          setMainGoalList(updatedMainGoalList);
 
           updateSubGoalInput(mainGoalId, '');
+        } else {
+          console.log('Error adding subgoal:', response.statusText);
         }
       } catch (error) {
         console.error('Error:', error);
@@ -110,26 +119,42 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
   };
 
   // Update
+
+  // Update
   const handleCheckboxChangeMainGoal = async (mainGoalId, newValue) => {
     try {
       setLoading(true);
-      const updatedMainGoalList = mainGoalList.map(goal =>
-        goal.id === mainGoalId ? {...goal, isChecked: newValue} : goal,
-      );
+
+      // Update the local state
+      const updatedMainGoalList = mainGoalList.map(goal => {
+        if (goal.id === mainGoalId) {
+          // Update main goal isChecked
+          goal.isChecked = newValue;
+
+          // Update subgoals isChecked
+          if (goal.subgoals) {
+            goal.subgoals = goal.subgoals.map(subgoal => ({
+              ...subgoal,
+              isChecked: newValue,
+            }));
+          }
+        }
+        return goal;
+      });
+
       setMainGoalList(updatedMainGoalList);
-      const response = await fetch(
-        `https://abdi-note-app-backend-prisma.vercel.app/api/main-goal`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            id: mainGoalId,
-            isChecked: newValue,
-          }),
+
+      // Update the database
+      const response = await fetch(`http://192.168.1.104:3000/api/main-goal`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify({
+          id: mainGoalId,
+          isChecked: newValue,
+        }),
+      });
 
       if (!response.ok) {
         console.log('Error updating main goal isChecked status');
@@ -144,6 +169,8 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
   const handleCheckboxChangeSubgoal = async (subgoalId, newValue) => {
     try {
       setLoading(true);
+
+      // Update the local state
       const updatedMainGoalList = mainGoalList.map(goal => {
         if (goal.subgoals) {
           goal.subgoals = goal.subgoals.map(subgoal =>
@@ -154,11 +181,11 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
         }
         return goal;
       });
-
       setMainGoalList(updatedMainGoalList);
 
+      // Update the database
       const response = await fetch(
-        `https://abdi-note-app-backend-prisma.vercel.app/api/subgoals`,
+        `http://192.168.1.104:3000/api/main-goal/sub-goal`,
         {
           method: 'PUT',
           headers: {
@@ -172,7 +199,10 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
       );
 
       if (!response.ok) {
-        console.log('Error updating subgoal isChecked status');
+        console.log(
+          'Error updating subgoal isChecked status. Server response:',
+          response,
+        );
       }
     } catch (error) {
       console.error('Error:', error);
@@ -228,6 +258,7 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
                 style={styles.input}
                 placeholder="Enter a new subgoal"
                 value={subGoalInputs[mainGoal.id] || ''}
+                placeholderTextColor={COLOR.black}
                 onChangeText={text => updateSubGoalInput(mainGoal.id, text)}
               />
               <TouchableOpacity onPress={() => handleAddSubgoal(mainGoal.id)}>
@@ -243,25 +274,43 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
       )}
       {/* Add Main Goal */}
       {showInput && (
-        <View style={styles.addCheckboxInput}>
+        <View style={styles.addMainGoal}>
           <TextInput
-            style={styles.input}
+            style={styles.inputGoal}
             placeholder="Enter a new main goal"
+            placeholderTextColor={COLOR.black}
             value={newMainGoal}
             onChangeText={text => setNewMainGoal(text)}
             onKeyPress={handleInputKeyPress}
             required={true}
           />
-          <TouchableOpacity onPress={handleAddMainGoal}>
-            <View style={styles.addCheckboxBtn}>
-              <Text style={styles.addcheck}>+ Add Checkbox</Text>
-            </View>
-          </TouchableOpacity>
+          <View style={styles.addMainGoalBtns}>
+            <TouchableOpacity onPress={handleAddMainGoal}>
+              <View style={styles.addCheckboxBtn}>
+                <Text style={styles.addcheck}>+ Add Checkbox</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setShowInput(false)}>
+              <View
+                style={[
+                  styles.addCheckboxBtn,
+                  {backgroundColor: COLOR.carrot},
+                ]}>
+                <Text style={[styles.addcheck, {color: COLOR.white}]}>
+                  Cancel
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
       {!showInput && (
         <TouchableOpacity onPress={() => setShowInput(true)}>
-          <View style={styles.addCheckboxBtn}>
+          <View
+            style={[
+              styles.addCheckboxBtn,
+              {marginTop: pixelSizeHorizontal(10)},
+            ]}>
             <Text style={styles.addcheck}>+ Add New MainGoal</Text>
           </View>
         </TouchableOpacity>
@@ -273,14 +322,23 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
 export default GoalsCRUD;
 
 const styles = StyleSheet.create({
+  addMainGoalBtns: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: pixelSizeHorizontal(10),
+  },
+  addMainGoal: {
+    marginTop: pixelSizeHorizontal(20),
+  },
   addCheckboxBtn: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: pixelSizeHorizontal(12),
-    paddingVertical: pixelSizeHorizontal(8),
-    borderRadius: 5,
-    marginLeft: pixelSizeHorizontal(10),
+    paddingHorizontal: pixelSizeHorizontal(8),
+    paddingVertical: pixelSizeHorizontal(4),
+    borderRadius: widthPixel(20),
+    borderWidth: widthPixel(1),
   },
   addcheck: {
     color: '#6A3EA1',
@@ -328,10 +386,20 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginTop: 5,
   },
+  inputGoal: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: COLOR.goal,
+    borderRadius: 5,
+    paddingVertical: 2,
+    paddingHorizontal: 12,
+    fontSize: 12,
+    color: 'black',
+  },
   input: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#6A3EA1',
+    borderColor: COLOR.purple,
     borderRadius: 5,
     paddingVertical: 2,
     paddingHorizontal: 12,

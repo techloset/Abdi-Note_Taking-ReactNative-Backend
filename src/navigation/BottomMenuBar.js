@@ -11,16 +11,7 @@ import {COLOR} from '../styles/consts/GlobalStyles';
 import SCREENS from '../constants/SCREENS';
 
 const openAlarmApp = () => {
-  const alarmAppUrl =
-    'https://play.google.com/store/apps/details?id=ar.com.basejuegos.simplealarm&pcampaignid=web_share';
-
-  Linking.canOpenURL(alarmAppUrl).then(supported => {
-    if (supported) {
-      Linking.openURL(alarmAppUrl);
-    } else {
-      console.log('Cannot open the alarm app. Make sure it is installed.');
-    }
-  });
+  alert('N/A');
 };
 
 const BottomMenuBar = () => {
@@ -43,12 +34,8 @@ const BottomMenuBar = () => {
     setSelectedColor(true);
   };
 
-  function handledelete() {
-    Toast.error('Notes Not be Availabel');
-  }
-
   function openLanguageSettings() {
-    Toast.error('Only English Language Availabel');
+    alert('N/A');
   }
 
   return (
@@ -214,7 +201,7 @@ const BottomMenuBar = () => {
               }}></View>
           </View>
 
-          <TouchableOpacity onPress={handledelete}>
+          <TouchableOpacity disabled>
             <View
               style={{display: 'flex', flexDirection: 'row', marginTop: 12}}>
               <Icon
