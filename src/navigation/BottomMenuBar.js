@@ -9,20 +9,23 @@ import Modal from 'react-native-modal';
 import Model from '../assets/images/model.svg';
 import {COLOR} from '../styles/consts/GlobalStyles';
 import SCREENS from '../constants/SCREENS';
-
-const openAlarmApp = () => {
-  alert('N/A');
-};
+import {useToast} from 'react-native-toast-notifications';
 
 const BottomMenuBar = () => {
   const [selectedColor, setSelectedColor] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [isModalVisible2, setModalVisible2] = useState(false);
   const navigation = useNavigation();
+
+  const toast = useToast();
+
   const searchBar = () => {
     navigation.navigate(SCREENS.SEARCH);
   };
 
+  const openAlarmApp = () => {
+    toast.show('N/A');
+  };
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -35,7 +38,7 @@ const BottomMenuBar = () => {
   };
 
   function openLanguageSettings() {
-    alert('N/A');
+    toast.show('N/A');
   }
 
   return (

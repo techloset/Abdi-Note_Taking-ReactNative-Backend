@@ -22,8 +22,10 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 
 import {useAuth} from '../context/AuthContext';
+import {useToast} from 'react-native-toast-notifications';
 
 const Guidance = () => {
+  const toast = useToast();
   const {authData} = useAuth();
 
   const [loadingImg, setLoadingImg] = useState(false);
@@ -54,10 +56,10 @@ const Guidance = () => {
 
           handleUploadImage(newfile);
         } else {
-          alert('Please select a file to upload');
+          toast.show('Please select a file to upload');
         }
       } else {
-        alert('You need to give camera permission to work');
+        toast.show('You need to give camera permission to work');
       }
     } catch (error) {
       console.error('Error opening gallery:', error);

@@ -19,17 +19,17 @@ import {
   widthPixel,
 } from '../../styles/consts/ratio';
 import Googleg from '../../assets/images/google.svg';
-import Facebook from '../../assets/images/facebook.svg';
 import AuthInput from '../../components/AuthInput';
 import {TEXT, COLOR} from '../../styles/consts/GlobalStyles';
 import PurpleBtn from '../../components/PurpleBtn';
-import API_ENDPOINT from '../../constants/LOCAL';
 import {useAuth} from '../../context/AuthContext';
 import SCREENS from '../../constants/SCREENS';
+import {useToast} from 'react-native-toast-notifications';
 
 const Login = () => {
+  const toast = useToast();
+
   const [loading, setloading] = useState(false);
-  const [userData, setUserData] = useState(null);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -54,12 +54,12 @@ const Login = () => {
     // Validate the email and password
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      alert('Please enter a valid email address');
+      toast.show('Please enter a valid email address');
       return;
     }
 
     if (password.length < 6) {
-      alert('Password must be at least 6 characters long');
+      toast.show('Password must be at least 6 characters long');
       return;
     }
 
@@ -80,7 +80,7 @@ const Login = () => {
 
       if (!res.ok) {
         const errorData = await res.json();
-        alert(`Login failed: ${errorData.message}`);
+        toast.show(`Login failed: ${errorData.message}`);
         return;
       } else {
         const userData = await res.json();
@@ -95,7 +95,7 @@ const Login = () => {
       }
     } catch (error) {
       console.error('Error during login:', error);
-      alert('Login failed. Please try again.');
+      toast.show('Login failed. Please try again.');
     }
     setloading(false);
   };

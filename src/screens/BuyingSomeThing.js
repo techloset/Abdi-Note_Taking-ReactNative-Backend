@@ -21,12 +21,14 @@ import {
   widthPixel,
 } from '../styles/consts/ratio';
 import {useAuth} from '../context/AuthContext';
+import {useToast} from 'react-native-toast-notifications';
 
 const BuyingSomeThing = () => {
   const [newCheckboxLabel, setNewCheckboxLabel] = useState('');
   const [checkboxList, setCheckboxList] = useState();
   const [showInput, setShowInput] = useState(false);
   const [loading, setLoading] = useState(false);
+  const toast = useToast();
 
   const {authData} = useAuth();
 
@@ -104,7 +106,7 @@ const BuyingSomeThing = () => {
         setLoading(false);
       }
     } else {
-      alert('Please enter title');
+      toast.show('Please enter title');
     }
   };
 

@@ -10,9 +10,11 @@ import {
 import {TEXT} from '../../styles/consts/GlobalStyles';
 import AuthInput from '../../components/AuthInput';
 import PurpleBtn from '../../components/PurpleBtn';
+import {useToast} from 'react-native-toast-notifications';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState();
+  const toast = useToast();
 
   return (
     <ScrollView style={styles.main}>
@@ -33,7 +35,7 @@ const ForgotPassword = () => {
         </View>
         <View style={{marginTop: pixelSizeHorizontal(50)}}>
           <PurpleBtn
-            onPress={() => alert('Please go back to the previous screen')}
+            onPress={() => toast.show('Please go back to the previous screen')}
             title="Submit"
           />
         </View>

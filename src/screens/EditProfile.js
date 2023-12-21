@@ -23,10 +23,13 @@ import {
 import {useAuth} from '../context/AuthContext';
 import storage from '@react-native-firebase/storage';
 
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {launchImageLibrary} from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useToast} from 'react-native-toast-notifications';
 
 const EditProfile = () => {
+  const toast = useToast();
+
   const {authData, setAuthData} = useAuth();
 
   const [updatedname, setname] = useState(authData.name);
@@ -69,10 +72,10 @@ const EditProfile = () => {
 
           handleUploadImage(newfile);
         } else {
-          alert('Please select a file to upload');
+          toast.show('Please select a file to upload');
         }
       } else {
-        alert('You need to give camera permission to work');
+        toast.show('You need to give camera permission to work');
       }
     } catch (error) {
       console.error('Error opening gallery:', error);

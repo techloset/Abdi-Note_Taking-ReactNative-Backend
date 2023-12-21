@@ -1,1 +1,2 @@
-export default API_ENDPOINT = 'http://192.168.1.104:3000/api';
+export default API_ENDPOINT =
+  'https://abdi-note-app-backend-prisma.vercel.app/api';

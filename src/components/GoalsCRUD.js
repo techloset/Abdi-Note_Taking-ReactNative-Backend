@@ -15,11 +15,13 @@ import {
   widthPixel,
 } from '../styles/consts/ratio';
 import {COLOR} from '../styles/consts/GlobalStyles';
+import {useToast} from 'react-native-toast-notifications';
 
 const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
   const [newMainGoal, setNewMainGoal] = useState('');
   const [subGoalInputs, setSubGoalInputs] = useState({});
   const [showInput, setShowInput] = useState(false);
+  const toast = useToast();
 
   const handleInputKeyPress = event => {
     if (event.key === 'Enter') {
@@ -66,17 +68,20 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
         setLoading(false);
       }
     } else {
-      alert('Please add title');
+      toast.show('Please add title');
     }
   };
 
   const handleAddSubgoal = async mainGoalId => {
     const inputText = subGoalInputs[mainGoalId]?.trim();
+    if (!inputText) {
+      toast.show('Please enter a title');
+    }
     if (inputText) {
       try {
         setLoading(true);
         const response = await fetch(
-          `http://192.168.1.104:3000/api/main-goal/sub-goal`,
+          `https://abdi-note-app-backend-prisma.vercel.app/api/main-goal/sub-goal`,
           {
             method: 'POST',
             headers: {
@@ -145,16 +150,19 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
       setMainGoalList(updatedMainGoalList);
 
       // Update the database
-      const response = await fetch(`http://192.168.1.104:3000/api/main-goal`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `https://abdi-note-app-backend-prisma.vercel.app/api/main-goal`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: mainGoalId,
+            isChecked: newValue,
+          }),
         },
-        body: JSON.stringify({
-          id: mainGoalId,
-          isChecked: newValue,
-        }),
-      });
+      );
 
       if (!response.ok) {
         console.log('Error updating main goal isChecked status');
@@ -185,7 +193,7 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
 
       // Update the database
       const response = await fetch(
-        `http://192.168.1.104:3000/api/main-goal/sub-goal`,
+        `https://abdi-note-app-backend-prisma.vercel.app/api/main-goal/sub-goal`,
         {
           method: 'PUT',
           headers: {
@@ -308,7 +316,7 @@ const GoalsCRUD = ({mainGoalList, setMainGoalList, user_id, setLoading}) => {
         <TouchableOpacity onPress={() => setShowInput(true)}>
           <View
             style={[
-              styles.addCheckboxBtn,
+              styles.addCheckboxBtnMain,
               {marginTop: pixelSizeHorizontal(10)},
             ]}>
             <Text style={styles.addcheck}>+ Add New MainGoal</Text>
@@ -330,6 +338,18 @@ const styles = StyleSheet.create({
   },
   addMainGoal: {
     marginTop: pixelSizeHorizontal(20),
+  },
+  addCheckboxBtnMain: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: pixelSizeHorizontal(8),
+    paddingVertical: pixelSizeHorizontal(4),
+    borderRadius: widthPixel(20),
+    borderWidth: widthPixel(2),
+    justifyContent: 'center',
+    width: widthPixel(200),
+    alignSelf: 'center',
+    marginTop: pixelSizeHorizontal(15),
   },
   addCheckboxBtn: {
     display: 'flex',

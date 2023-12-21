@@ -21,10 +21,11 @@ import {
 import {TEXT} from '../../styles/consts/GlobalStyles';
 import AuthInput from '../../components/AuthInput';
 import SCREENS from '../../constants/SCREENS';
-import API_ENDPOINT from '../../constants/LOCAL';
+import {useToast} from 'react-native-toast-notifications';
 
 const Register = () => {
   const navigation = useNavigation();
+  const toast = useToast();
 
   const [loading, setloading] = useState(false);
   const [formData, setFormData] = useState({
@@ -51,17 +52,17 @@ const Register = () => {
         !formData.password ||
         !formData.confirmPassword
       ) {
-        alert('Please fill in all fields.');
+        toast.show('Please fill in all fields.');
         return;
       }
 
       if (!validateEmail(formData.email)) {
-        alert('Please enter a valid email address.');
+        toast.show('Please enter a valid email address.');
         return;
       }
 
       if (formData.password !== formData.confirmPassword) {
-        alert('Passwords do not match.');
+        toast.show('Passwords do not match.');
         return;
       }
 
@@ -86,12 +87,12 @@ const Register = () => {
         navigation.navigate(SCREENS.LOGIN);
       } else {
         setloading(false);
-        alert('An error occurred');
+        toast.show('An error occurred');
       }
     } catch (error) {
       console.log(error);
       setloading(false);
-      alert('Please try again');
+      toast.show('Please try again');
     }
   };
 
